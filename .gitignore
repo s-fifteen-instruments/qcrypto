@@ -1,2 +1,4 @@
 
 .DS_Store
+*.o
+errorcorrection/ecd2
