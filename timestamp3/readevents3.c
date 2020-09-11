@@ -201,7 +201,7 @@
 /* default settings */
 #define DEFAULT_VERBOSITY 0
 #define MAX_VERBOSITY 1
-#define DEFAULT_INPUT_TRESHOLD 3586 /* corresponding to approx -500mV, was 2950*/
+#define DEFAULT_INPUT_TRESHOLD 2950 /* corresponding to approx -500mV, was 2950*/
 #define MAX_INP_TRESHOLD 4095
 #define DEFAULT_POLLING_INTERVAL 40 /* in milliseconds */
 #define DEFAULT_OUTMODE 0
@@ -524,7 +524,7 @@ int process_quads(void *sourcebuffer, int startquad, int endquad) {
 			     (markit & 0x1ff0);  /* for debugging */
 
 			/* repair pipelining bug */
-			if ( (fastcnt < 0x00880000)) {
+			if ((fastcnt < 0x00880000)) {
 				b0 = dv & 0x80000000; /* remember carry */
 				dv += 0x01000000;
 				if (b0 && !(dv & 0x80000000)) cv++; /* eventually do carry */
@@ -540,12 +540,12 @@ int process_quads(void *sourcebuffer, int startquad, int endquad) {
 					outbuf[j].cv = (unsigned int) (current_time >> 32);
 					outbuf[j].dv = (unsigned int) (current_time & 0xffffffff);
 				} else {
-					if (current_time - lasttime[pattern] > ddeadpatt[pattern]) {
+					if ((current_time - lasttime[pattern]) > ddeadpatt[pattern]) {
 						lasttime[pattern] = current_time;
 						outbuf[j].cv = (unsigned int) (current_time >> 32);
 						outbuf[j].dv = (unsigned int) (current_time & 0xffffffff);
 					} else {
-						lasttime[pattern] = current_time;
+						// lasttime[pattern] = current_time;
 						continue; /* next element in for loop */
 					}
 				}
