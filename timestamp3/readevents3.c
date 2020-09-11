@@ -49,43 +49,42 @@
                       until  a SIGUSR1 is received.
    -a outmode :       Defines output mode. Defaults currently to 0. Currently
                       implemented output modes are:
-		      0: raw event code patterns are delivered as 64 bit
-		         hexadecimal patterns (i.e., 16 characters)
-		         separated by newlines. Exact structure of
-			 such an event: see card description.
-		      1: event patterns with a consolidated timing
-		         (i.e., corrected for spurious samplings from the
-			 nudaq card)
-		         are given out as 64 bit entities. Format:
-			 most significant 49 bits contain timing info
-			 in multiples of 0.125 nsec, least significant
-			 4 bits contain the detector pattern.
-
-		      2: output consolidated timing info as 64 bit patterns
-		         as in option 1, but as hext text.
-		      3: output only the phase pattern (for tests only) as
-		         decimal values from 0-511 from consolidated timing
-			 info.
-	              4: output as three space-separated hex patterns for
-			 msl, lsl, and pattern
-	              5: output as three space-separated decimal patterns for
-			 msl, lsl, and pattern
+		                  0: raw event code patterns are delivered as 64 bit
+            		         hexadecimal patterns (i.e., 16 characters)
+            		         separated by newlines. Exact structure of
+            			       such an event: see card description.
+            		      1: event patterns with a consolidated timing
+            		         (i.e., corrected for spurious samplings from the
+            			       nudaq card)
+            		         are given out as 64 bit entities. Format:
+                  			 most significant 49 bits contain timing info
+                  			 in multiples of 0.125 nsec, least significant
+                  			 4 bits contain the detector pattern.
+            		      2: output consolidated timing info as 64 bit patterns
+            		         as in option 1, but as hext text.
+            		      3: output only the phase pattern (for tests only) as
+            		         decimal values from 0-511 from consolidated timing
+                  			 info.
+                  	  4: output as three space-separated hex patterns for
+                  			 msl, lsl, and pattern
+                  	  5: output as three space-separated decimal patterns for
+                  			 msl, lsl, and pattern
 
    -v verbosity :     selects how much noise is generated on nonstandard
                       events. All comments go to stderr. A value of 0
-		      means no comments. Default is 0.
+		                  means no comments. Default is 0.
    -s skew :          set timing skew DAC to value skew (must be
                       between 0 and 4095); default: 2000 (old: 1535)
    -j cal :           run in calibrate mode and use calibration value cal.
-   -A :		      Output in absolute time. The timestamp mark is added to
+   -A :		            Output in absolute time. The timestamp mark is added to
                       the unix time evaluated upon starting of the timestamp
-		      card; the resulting time is truncated to the least
-		      significant 49 bit in multiples of time units (1/8 nsec).
+		                  card; the resulting time is truncated to the least
+		                  significant 49 bit in multiples of time units (1/8 nsec).
    -F :               flush after each output line. useful for debugging.
    -p phasepatt :     select phase correction table. currently implemented:
                       -1:  no phase correction
-		      0:  phase table for board revision 0
-		      2: phase table calibrated for g2 measurement (default)
+            		      0:  phase table for board revision 0
+            		      2: phase table calibrated for g2 measurement (default)
    -e :               choose external clock (assume 10 MHz)
    -i :               use internal 10 MHz clock. This is the default.
    -x :               exclude spurious outputs (larger than 8 average
@@ -94,26 +93,26 @@
                       avoid stale entries in the dma pipeline ?). Default is 0.
    -m opt:            marking option. if set to 1, the unused bits are used to
                       indicate time slips between timestamp time and CPU time.
-		      For opt = 0, the phase info is given in bits 4..12
-		      (default). for opt=2, all bits are zero.
+		                  For opt = 0, the phase info is given in bits 4..12
+		                  (default). for opt=2, all bits are zero.
    -d s1,s2,s3,s4:    add skew times to individual detectors. The supplied
                       values must be comma-separated and identify corrections
- 		      in multiples of 125 ps for each detector. This skew
- 		      is added to the timing information in case only a single
- 		      detector fires. Values can be positive or negative.
- 		      This option is only executed if the -A option is active
- 		      in order to minimize processing in the central timing
- 		      routine.
+             		      in multiples of 125 ps for each detector. This skew
+             		      is added to the timing information in case only a single
+             		      detector fires. Values can be positive or negative.
+             		      This option is only executed if the -A option is active
+             		      in order to minimize processing in the central timing
+             		      routine.
    -D s1,s2,s3,s4,s5,s6,s7,s8 : Same as the -d option, but this time for
                       taking care of up to 8 detectors. Detector assignment:
                       line 1:    det 1
-		      line 2:    det 2
-		      line 3:    det 3
-		      line 4:    det 4
-		      line 1-2:  det 5
-		      line 2-3:  det 6
-		      line 3-4:  det 7
-		      line 4-1:  det 8
+            		      line 2:    det 2
+            		      line 3:    det 3
+            		      line 4:    det 4
+            		      line 1-2:  det 5
+            		      line 2-3:  det 6
+            		      line 3-4:  det 7
+            		      line 4-1:  det 8
    -u                 usb flush mode is on. If no events were detected
                       during one periode, the flush option is activated
 
@@ -121,7 +120,7 @@
                       If not specified, the default is /dev/ioboards/timestamp0
    -Y y1,y2,y3,y4:    ignores detector events if they fall within a certain time
                       of the last event seen by a particular detector. The dead times
-		      y1...y4 are measured in multiples of 125ps.
+		                  y1...y4 are measured in multiples of 125ps.
 
    Signals:
    SIGUSR1:   enable data acquisition. This causes the inhibit flag

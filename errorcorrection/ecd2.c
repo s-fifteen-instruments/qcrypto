@@ -61,19 +61,19 @@ options/parameters:
 
   -c commandpipe:       pipe for receiving commands. A command is typically an
                         epoch name and a number of blocks to follow, separated
-      by a whitespace. An optional error argument can be
-      passed as a third parameter. Commands are read via
-      fscanf, and should be terminated with a newline.
+                        by a whitespace. An optional error argument can be
+                        passed as a third parameter. Commands are read via
+                        fscanf, and should be terminated with a newline.
   -s sendpipe:          binary connection which reaches to the transfer
                         program. This is for packets to be sent out to the
-      other side. Could be replaced by sockets later.
+                        other side. Could be replaced by sockets later.
   -r receivepipe:       same as sendpipe, but for incoming packets.
   -d rawkeydirectory:   directory which contains epoch files for raw keys in
                         stream-3 format
   -f finalkeydirectory: Directory which contains the final key files.
   -l notificationpipe:  whenever a final key block is processed, its epoch name
                         is written into this pipe or file. The content of the
-      message is determined by the verbosity flag.
+                        message is determined by the verbosity flag.
   -Q querypipe:         to request the current status of a particular epoch
                         block, requests may be sent into this pipe. Syntax TBD.
   -q respondpipe:       Answers to requests will be written into this pipe or
@@ -83,48 +83,48 @@ options/parameters:
 
   -e errormargin:       A float parameter for how many standard deviations
                         of the detected errors should be added to the
-      information leakage estimation to eve, assuming a
-      poissonian statistics on the found errors (i.e.,
-      if 100 error bits are found, one standard deviation
-      in the error rate QBER is QBER /Sqrt(10). )
-      Default is set to 0.
+                        information leakage estimation to eve, assuming a
+                        poissonian statistics on the found errors (i.e.,
+                        if 100 error bits are found, one standard deviation
+                        in the error rate QBER is QBER /Sqrt(10). )
+                        Default is set to 0.
   -E expectederror:     an initial error rate can be given for choosing the
                         length of the first test. Default is 0.05. This may
-      be overridden by a servoed quantity or by an explicit
-      statement in a command.
+                        be overridden by a servoed quantity or by an explicit
+                        statement in a command.
   -k                    killfile option. If set, the raw key files will be
                         deleted after writing the final key into a file.
   -J basicerror:        Error rate which is assumed to be generated outside the
                         influence of an eavesdropper.
   -T errorbehavior:     Determines the way how to react on errors which should
                         not stop the demon. Default is 0. detailed behavior:
-      0: terminate program on everything
-      1: ignore errors on wrong packets???
-      2: ignore errors inherited from other side
+                        0: terminate program on everything
+                        1: ignore errors on wrong packets???
+                        2: ignore errors inherited from other side
   -V verbosity:         Defines verbosity mode on the logging output after a
                         block has been processed. options:
-      0: just output the raw block name (epoch number in hex)
-      1: output the block name, number of final bits
-      2: output block name, num of initial bits, number of
-         final bits, error rate
-      3: same as 2, but in plain text
-      4: same as 2, but with explicit number of leaked bits
-         in the error correction procedure
-      5: same as 4, but with plain text comments
+                        0: just output the raw block name (epoch number in hex)
+                        1: output the block name, number of final bits
+                        2: output block name, num of initial bits, number of
+                           final bits, error rate
+                        3: same as 2, but in plain text
+                        4: same as 2, but with explicit number of leaked bits
+                           in the error correction procedure
+                        5: same as 4, but with plain text comments
   -I                    ignoreerroroption. If this option is on, the initial
                         error measurement for block optimization is skipped,
-      and the default value or supplied value is chosen. This
-      option should increase the efficiency of the key
-      regeneration if a servo for the error rate is on.
+                        and the default value or supplied value is chosen. This
+                        option should increase the efficiency of the key
+                        regeneration if a servo for the error rate is on.
   -i                    deviceindependent option. If this option is set,
                         the deamon expects to receive a value for the Bell
-      violation parameter to estimate the knowledge of an
-      eavesdropper.
+                        violation parameter to estimate the knowledge of an
+                        eavesdropper.
   -p                    avoid privacy amplification. For debugging purposes, to
                         find the residual error rate
   -B BER:               choose the number of BICONF rounds to meet a final
                         bit error probability of BER. This assumes a residual
-      error rate of 10^-4 after the first two rounds.
+                        error rate of 10^-4 after the first two rounds.
   -b rounds:            choose the number of BICONF rounds. Defaults to 10,
                         corresponding to a BER of 10^-7.
 
@@ -147,10 +147,10 @@ modified version of errcd to take care of the followig problems:
    - initial key permutation
    - more efficient biconf check
    - allow recursive correction after biconf error discoveries
-    status: seems to work. needs some cleanup, and needs to be tested for
+      status: seems to work. needs some cleanup, and needs to be tested for
       longer key lenghts to confirm the BER below 10^-7 with some confidence.
       (chk 21.7.07)
-      - inserted error margin option to allow for a few std deviations of the
+    - inserted error margin option to allow for a few std deviations of the
       detected error
 
 open questions / issues:
