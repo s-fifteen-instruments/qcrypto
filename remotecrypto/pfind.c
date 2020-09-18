@@ -1,6 +1,6 @@
 /* pfind.c :   Part of the quantum key distribution software for finding the
                time difference between two timestamped correlated detctor
-         data streams. Description see below. Version as of 20070101
+	       data streams. Description see below. Version as of 20070101
 
  Copyright (C) 2005-2006 Christian Kurtsiefer, National University
                          of Singapore <christian.kurtsiefer@gmail.com>
@@ -30,30 +30,30 @@
 
    usage:  pfind [-i type-2 streamfile] | [-d type-2 directory] | [-s socket2]
                  [-I type-1 streamfile] | [-D type-1 directory] | [-S socket1]
-     -e startepoch
-     [-n epochnums]
-     [-l logfilename] [-v verbosity]
-     [-k] [-K]
-     [-r resolution]
-     [-q bufferwidth ]
+				 -e startepoch
+				 [-n epochnums]
+				 [-l logfilename] [-v verbosity]
+				 [-k] [-K]
+				 [-r resolution]
+				 [-q bufferwidth ]
 
  DATA STREAM OPTIONS:
-   -i infile2:      filename of type-2 packets. Can be a file or a socket
+   -i infile2:      Filename of type-2 packets. Can be a file or a socket
                     and has to supply binary data according to the type-2
-        data spec from the chopper program.
+		    		data spec from the chopper program.
    -d dir2:         All type-2 packets are saved into the directory dir2, with
                     the file name being the epoch (filling zero expanded)
-        in hex. Filename is not padded at end.
-   -I infile1:      filename of type-1 packets. Can be a file or a socket
+		    		in hex. Filename is not padded at end.
+   -I infile1:      Filename of type-1 packets. Can be a file or a socket
                     and has to supply binary data according to the type-1
-        data spec from the chopper2 program.
+		    		data spec from the chopper2 program.
    -D dir1:         All type-1 packets are saved into the directory dir1, with
                     the file name being the epoch (filling zero expanded)
-        in hex. Filename is not padded at end.
-   -k :             if set, type-2 streams are removed aafter consumption
-        if the directory input has been chosen.
-   -K :             if set, type-1 streams are removed aafter consumption
-        if the directory input has been chosen.
+		    		in hex. Filename is not padded at end.
+   -k :             If set, type-2 streams are removed aafter consumption
+		    		if the directory input has been chosen.
+   -K :             If set, type-1 streams are removed aafter consumption
+		    		if the directory input has been chosen.
 
  DATA MANAGEMENT OPTIONS:
    -e startepoch    epoch to start with. default is 0.
@@ -61,27 +61,28 @@
                     time delay. default is 1.
 
  RESOLUTION:
-   -r resolution   resolution of timing info in nanoseconds. Will be rounded
-                   to closest power of 1 nsec. Default is 2 nsec.
-   -q bufferwidth  order of FFT buffer size. Defines the wraparound size
-                   of the coarse / fine periode finding part. defaults
-       to 17 (128k entries), must lie within 12 and 23.
+   -r resolution   	resolution of timing info in nanoseconds. Will be rounded
+                   	to closest power of 1 nsec. Default is 2 nsec.
+   -q bufferwidth 	order of FFT buffer size. Defines the wraparound size
+                  	of the coarse / fine periode finding part. defaults
+		   			to 17 (128k entries), must lie within 12 and 23.
 
  LOGGING & NOTIFICATION:
-   -l logfile:   The resulting time difference or details are logged into this
-                 file. if this option is not specified, STDOUT is used.
-     The verbosity level controls the granularity of details.
-   -V level:     Verbosity level control. level is integer, and by default set
-                 to 0. The logging verbosity criteria are:
-     level<0 : no output
-     0 : output difference (in plaintext decimal ascii)
-     1 : output difference and reliability info w/o text
-     2 : output difference and reliability info with text
-     3 : more text
+   -l logfile:   	The resulting time difference or details are logged into this
+                 	file. if this option is not specified, STDOUT is used.
+		 			The verbosity level controls the granularity of details.
+   -V level:     	Verbosity level control. level is integer, and by default set
+                 	to 0. The logging verbosity criteria are:
+						level<0 : no output
+						0 : output difference (in plaintext decimal ascii)
+						1 : output difference and reliability info w/o text
+						2 : output difference and reliability info with text
+						3 : more text
 
   History:
   written specs: 21.8.05 chk
   added -q option for buffer order parameter 4.3.06chk
+  added multithreaded ffts 18. September 2020
 
 
   ToDo:
@@ -115,6 +116,7 @@
 #define DEFAULT_KILLMODE1 0 /* don't delete stream-1 files */
 #define DEFAULT_KILLMODE2 0 /* don't delete stream-2 files */
 #define DEFAULT_STARTEPOCH 0
+#define DEFAULT_THREADNUM 4 /* FFTW threads number */
 #define DEFAULT_EPOCHNUMBER 1 /* How many epochs to consider */
 #define DEFAULT_RESOLUTION 2 /* resolution in nanoseconds */
 #define RAW1_SIZE 6400000 /* should last for 1400 kcps */
@@ -122,7 +124,7 @@
 /* definitions for folding */
 #define DEFAULT_BBW 17 /* default buffer_bitwidth */
 #define BBW_MIN 12 /* limits for bufer width */
-#define BBW_MAX 23 /* limits for buffer width */
+#define BBW_MAX 27 /* limits for buffer width */
 #define CRES_ORDER (11+3) /* coarse resolution is 2048 nsec */
 #define COARSE_RES (1<<CRES_ORDER)
 
@@ -204,8 +206,7 @@ char fname1[FNAMELENGTH] = "";
 char fname2[FNAMELENGTH] = "";
 char logfname[FNAMELENGTH] = "";
 char ffnam[FNAMELENGTH + 10];
-int type1mode = 0; /* no mode defined. other tpyes:
-          1: single file, 2: directory save, ... */
+int type1mode = 0; /* no mode defined. other tpyes: 1: single file, 2: directory save, ... */
 int type2mode = 0; /* same as for type-1 files */
 int killmode1 = DEFAULT_KILLMODE1 ; /* if != 1, infile is deleted after use */
 int killmode2 = DEFAULT_KILLMODE2 ; /* if != 1, infile is deleted after use */
@@ -309,11 +310,14 @@ void findmax(int *buf1, int *buf2, double* maxval, double *sigma,
 	ar = ((double)ecnt1) / size; /* to get mean at zero */
 	br = ((double)ecnt2) / size;
 	for (i = 0; i < size; i++) {
-		f1[i][0] = (double)buf1[i] - ar; f1[i][1] = 0.;
-		f2[i][0] = (double)buf2[i] - br; f2[i][1] = 0.;
+		f1[i][0] = (double)buf1[i] - ar;
+		f1[i][1] = 0.;
+		f2[i][0] = (double)buf2[i] - br;
+		f2[i][1] = 0.;
 	}
 	/* do forward transformations */
-	fftw_execute(plan1);  fftw_execute(plan2);
+	fftw_execute(plan1);
+	fftw_execute(plan2);
 	/* do conjugate and multiplication into array 1 */
 	for (i = 0; i < size; i++) {
 		ar = f1[i][0];
@@ -326,18 +330,10 @@ void findmax(int *buf1, int *buf2, double* maxval, double *sigma,
 	/* do do backtransform */
 	fftw_execute(plan3);
 	/* evaluate max, stddev and mean */
-	*maxval = 0.;
-	maxpos = 0;
-	sxx = 0;
-	sx = 0.;
+	*maxval = 0.; maxpos = 0; sxx = 0; sx = 0.;
 	for (i = 0; i < size; i++) {
-		ar = f1[i][0];
-		if (ar > *maxval) {
-			maxpos = i;
-			*maxval = ar;
-		}
-		sx += ar;
-		sxx += (ar * ar);
+		ar = f1[i][0]; if (ar > *maxval) {maxpos = i; *maxval = ar;}
+		sx += ar; sxx += (ar * ar);
 	}
 	/* return values properly back */
 	*mean = sx / size;
@@ -356,6 +352,7 @@ unsigned int overlay_correction[16] = {0, PL1, 0, MI1, MI1, 0, PL1, 0,
 int main (int argc, char *argv[]) {
 	FILE* loghandle; /* for log files */
 	unsigned int startepoch = DEFAULT_STARTEPOCH; /* epoch to start with */
+	int numthread = DEFAULT_THREADNUM; /* number of threads */
 	int epochnumber = DEFAULT_EPOCHNUMBER; /* # of epochs to read  */
 	int resolution = DEFAULT_RESOLUTION;  /* in units of nsec */
 	int resorder; /* shift mask for resolution */
@@ -382,6 +379,7 @@ int main (int argc, char *argv[]) {
 	long long int se_in; /* for entering startepoch both in hex and decimal */
 	int buf_bitwidth = DEFAULT_BBW; /* length of individual buffers */
 	int zhs = (1 << DEFAULT_BBW);
+	fftw_init_threads();
 
 	/* parsing options */
 	opterr = 0; /* be quiet when there are no options */
@@ -409,31 +407,24 @@ int main (int argc, char *argv[]) {
 			killmode1 = 1;
 			break;
 		case 'e': /* read startepoch */
-			if (1 != sscanf(optarg, "%lli", &se_in)) 
-				return -emsg(6);
+			if (1 != sscanf(optarg, "%lli", &se_in)) return -emsg(6);
 			startepoch = se_in & 0xffffffff;
 			break;
 		case 'n': /* read startepoch */
-			if (1 != sscanf(optarg, "%d", &epochnumber)) 
-				return -emsg(7);
+			if (1 != sscanf(optarg, "%d", &epochnumber)) return -emsg(7);
 			break;
 		case 'r': /* resolution */
-			if (1 != sscanf(optarg, "%d", &resolution)) 
-				return -emsg(8);
+			if (1 != sscanf(optarg, "%d", &resolution)) return -emsg(8);
 			i = resolution;
-			for (resorder = 0; i > 1; i /= 2) 
-				resorder++;
-			if (resolution != (1 << resorder)) 
-				return -emsg(9);
+			for (resorder = 0; i > 1; i /= 2) resorder++;
+			if (resolution != (1 << resorder)) return -emsg(9);
 			break;
 		case 'l': /* logfile name */
-			if (sscanf(optarg, FNAMFORMAT, logfname) != 1) 
-				return -emsg(10);
+			if (sscanf(optarg, FNAMFORMAT, logfname) != 1) return -emsg(10);
 			logfname[FNAMELENGTH - 1] = 0; /* security termination */
 			break;
 		case 'q': /* get buffer order */
-			if (sscanf(optarg, "%d", &buf_bitwidth) != 1) 
-				return -emsg(29);
+			if (sscanf(optarg, "%d", &buf_bitwidth) != 1) return -emsg(29);
 			if (buf_bitwidth < BBW_MIN || buf_bitwidth > BBW_MAX)
 				return -emsg(30);  /* out of range */
 			break;
@@ -443,10 +434,8 @@ int main (int argc, char *argv[]) {
 
 	/* check argument consistency */
 	i = resolution;
-	for (resorder = 0; i > 1; i /= 2) 
-		resorder++;
-	if (resolution != (1 << resorder)) 
-		return -emsg(9);
+	for (resorder = 0; i > 1; i /= 2) resorder++;
+	if (resolution != (1 << resorder)) return -emsg(9);
 	resorder += 3; /* from now on, it refers to 1/8 nsec */
 	resolution *= 8; /* refers also to 1/8 nsec */
 
@@ -460,16 +449,14 @@ int main (int argc, char *argv[]) {
 
 	/* prepare integer buffers for folded timings */
 	buf1_fast = (int*)calloc(zhs * 4, sizeof(int));
-	if (!buf1_fast) 
-		return -emsg(6);
-	buf1_slow = &buf1_fast[zhs];
-	buf2_fast = &buf1_slow[zhs];
+	if (!buf1_fast) return -emsg(6);
+	buf1_slow = &buf1_fast[zhs]; buf2_fast = &buf1_slow[zhs];
 	buf2_slow = &buf2_fast[zhs];
 
 	/* prepare event isolation constants */
 	mask = zhs - 1;
 	fres = resorder; /* shifting for fine order */
-	sres = CRES_ORDER; /* shifting for coarse timing */
+	sres = CRES_ORDER; /* shifting for coarse timng */
 
 	/* concatenate events into buffer; first, the type-1 stream events */
 	ecnt1 = 0; /* event counter 1 */
@@ -477,8 +464,7 @@ int main (int argc, char *argv[]) {
 	/* eventually open stream 1 */
 	if (type1mode == 1) { /* single file */
 		if (fname1[0]) { /* not stdin */
-			if (-1 == (handle1 = open(fname1, O_RDONLY)))
-				return -emsg(20);
+			if (-1 == (handle1 = open(fname1, O_RDONLY))) return -emsg(20);
 		} else { handle1 = 0; } /* stdin */
 	}
 	for (i = 0; i < epochnumber; i++) {
@@ -578,12 +564,10 @@ int main (int argc, char *argv[]) {
 		/* adjust to current epoch origin */
 		intime = ((unsigned long long)thisepoch) << 32;
 		/* prepare decompression */
-		j = 0;
-		readword = pointer2[j++]; /* raw buffer */
+		j = 0; readword = pointer2[j++]; /* raw buffer */
 		/* printf("first readw: %x\n",readword);*/
 		resbits = 32; /* how much to eat */
-		type2bitwidth = head2.timeorder;
-		type2datawidth = head2.basebits;
+		type2bitwidth = head2.timeorder; type2datawidth = head2.basebits;
 		bitstoread2 = type2bitwidth + type2datawidth; /* has to be <32 !! */
 		tdiff_bitmask = (1 << type2bitwidth) - 1; /* for unpacking */
 		patternmask = (1 << type2datawidth) - 1;
@@ -611,16 +595,14 @@ int main (int argc, char *argv[]) {
 			/* we have a time difference word now in tdiff */
 			if (tdiff &= tdiff_bitmask) { /* check for exception */
 				/* test for end of stream */
-				if (tdiff == 1)
-					break; /* exit digest routine for this stream */
+				if (tdiff == 1) break; /* exit digest routine for this stream */
 			} else {
 				/* read in complete difference */
 				tdiff = readword << (32 - resbits);
 				readword = pointer2[j++];
 				/* printf("e: rw=%x ",readword); */
 				/* catch shift 'feature' - normal */
-				if (resbits & 0x1f)
-					tdiff |= readword >> resbits;
+				if (resbits & 0x1f) tdiff |= readword >> resbits;
 				tdiff >>= type2datawidth;
 				tdiff |=  (pattern << (32 - type2datawidth));
 			}
@@ -631,9 +613,9 @@ int main (int argc, char *argv[]) {
 			buf2_slow[(int)(mask & (intime >> sres))]++;
 			ku++;
 		} while (j < emergency_break);
-		/*  printf("control point 14\n");
-		  printf("head2.length: %d, j:%d, eme: %d, k: %d,tdiff: %d\n",
-		  head2.length,j,emergency_break,k,tdiff); */
+		/* 	printf("control point 14\n");
+			printf("head2.length: %d, j:%d, eme: %d, k: %d,tdiff: %d\n",
+			head2.length,j,emergency_break,k,tdiff); */
 		/* consistency check */
 		if (head2.length || (j >= emergency_break)) if (ku != head2.length) {
 				fprintf(stderr, "ku: %d, announced len: %d ", ku, head2.length);
@@ -669,6 +651,7 @@ int main (int argc, char *argv[]) {
 	f1 = fftw_malloc(sizeof(fftw_complex) * zhs);
 	f2 = fftw_malloc(sizeof(fftw_complex) * zhs);
 
+	fftw_plan_with_nthreads(numthread);
 	plan1 = fftw_plan_dft_1d(zhs, f1, f1, FFTW_FORWARD, FFTW_ESTIMATE);
 	plan2 = fftw_plan_dft_1d(zhs, f2, f2, FFTW_FORWARD, FFTW_ESTIMATE);
 	plan3 = fftw_plan_dft_1d(zhs, f1, f1, FFTW_BACKWARD, FFTW_ESTIMATE);
@@ -732,5 +715,7 @@ int main (int argc, char *argv[]) {
 		fprintf(loghandle, "Verbosity level undefined.\n");
 	}
 	if (logfname[0]) fclose(loghandle);
+
+
 	return 0;
 }

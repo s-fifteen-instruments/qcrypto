@@ -7,7 +7,7 @@ chopper2: chopper2.c
 	gcc -Wall -O3 -o chopper2 chopper2.c
 
 pfind: pfind.c
-	gcc -Wall -O3 -o pfind pfind.c -lfftw3 -lm
+	gcc -Wall -O3 -o pfind pfind.c -pthread -lfftw3_threads -lfftw3 -lm
 
 decompress: decompress.c
 	gcc -Wall -O3 -o decompress decompress.c
