@@ -51,7 +51,7 @@ set rcoincw 2000 ; # read coincidence window for
 set periodecount 15 ; # number of epochs for finding a periode
 set costreamhistoopt "" ; # histogramming off normally
 set costreamhistonum 10 ; # number of averagings
-set akfbufferorder 19 ; # defines size of AKF algo
+set akfbufferorder 24 ; # defines size of AKF algo
 set detcorrection "" ; # detector timing correction
 set detcorrmode 0 ; # detector correction, default off
 for {set i 0 } {$i < 4} {incr i} { set detcval($i) 0 } ; # det skew
