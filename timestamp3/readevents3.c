@@ -333,7 +333,7 @@ unsigned long long dayoffset_1; /* contains local time in 1/8 nsecs
 unsigned long long dayoffset[16]; /* to hold timings */
 unsigned long long lasttime[16]; /* holds last event for a given detector pattern */
 unsigned int ddeadpatt[16]; /* dead time correction, indexed by pattern */
-char patt2det[16] = { 1, 2, 4, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}; /* translation table patt->det */
+char patt2det[16] = { -1, 0, 1, -1, 2, -1, -1, -1, 3, -1, -1, -1, -1, -1, -1, -1}; /* translation table patt->det */
 int deadtimecorrect = 0;
 
 struct timeval timerequest_pointer; /*  structure to hold time requeste  */
