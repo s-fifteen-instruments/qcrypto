@@ -557,21 +557,18 @@ int emit_histo(unsigned int epoch)
     char hl2[FNAMELENGTH + 10];
     int i, j;
     FILE *hh; /* histogram handle */
-    if (histologname[0])
-    {
+    if (histologname[0]){
         strncpy(hl2, histologname, FNAMELENGTH);
         j = strlen(hl2);
         for (i = 0; i < 8; i++)
             hl2[j + i] = hexdigits[(epoch >> (4 * (7 - i))) & 0xf];
         hl2[j + 8] = 0; /* string termination */
-        if (!(hh = fopen(hl2, "w")))
-        {
+        if (!(hh = fopen(hl2, "w"))){
             return 68; /* cannot open histo file */
         }
         fprintf(hh, "# time difference histogramming output. Start epoch: %08x, contains %d epochs.\n# The timing info in column 1 is in multiples of 125ps. The\n# next 24 columns contain legal events, column 26 the number of illegal events.\n", epoch - histolen, histolen);
         fflush(hh);
-        for (j = 0; j < DEFAULT_HISTODEPTH; j++)
-        {
+        for (j = 0; j < DEFAULT_HISTODEPTH; j++){
             fprintf(hh, "%d ", j - DEFAULT_HISTODEPTH / 2);
             for (i = 0; i < 25; i++)
                 fprintf(hh, "%d%c", histo[i][j], i < 24 ? ' ' : '\n');
@@ -667,8 +664,7 @@ char *errormessage[] = {
     "wrong skew format. needs -S v1,v2,v3,v4", /* 80 */
 };
 
-int emsg(int code)
-{
+int emsg(int code){
     fprintf(stderr, "%s\n", errormessage[code]);
     return code;
 };
