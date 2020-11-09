@@ -47,63 +47,67 @@
 #include <sys/time.h>
 #include <math.h>
 
-#define FNAMELENGTH 200  /* length of file name buffers */
-#define FNAMFORMAT "%200s"   /* for sscanf of filenames */
-#define DEFAULT_OUTMODE 0 /* supply formatted output */
+#define FNAMELENGTH 200    /* length of file name buffers */
+#define FNAMFORMAT "%200s" /* for sscanf of filenames */
+#define DEFAULT_OUTMODE 0  /* supply formatted output */
 
-#define RAW3i_SIZE 1500000  /* more than enough? */
+#define RAW3i_SIZE 1500000 /* more than enough? */
 
-
-typedef struct header_3 {/* header for type-3 stream packet */
-    int tag;
-    unsigned int epoc;
-    unsigned int length;
-    int bitsperentry; 
+typedef struct header_3
+{ /* header for type-3 stream packet */
+  int tag;
+  unsigned int epoc;
+  unsigned int length;
+  int bitsperentry;
 } h3;
 
 #define TYPE_3_TAG 3
 #define TYPE_3_TAG_U 0x103
 
-
-
 char *errormessage[] = {
-  "No error.",
-  "Error reading file/directory name for type-7 input packets.", /* 1 */
-  "cannot malloc input buffer.",
-  "canot open input file",
-  "cannot get header",
-  "error reading file (nothing there)", /* 5 */
+    "No error.",
+    "Error reading file/directory name for type-7 input packets.", /* 1 */
+    "cannot malloc input buffer.",
+    "canot open input file",
+    "cannot get header",
+    "error reading file (nothing there)", /* 5 */
 };
-int emsg(int code) {
-  fprintf(stderr,"%s\n",errormessage[code]);
+int emsg(int code)
+{
+  fprintf(stderr, "%s\n", errormessage[code]);
   return code;
 };
 
+int main(int argc, char *argv[])
+{
+  char fname[FNAMELENGTH] = {""}; /* stream files */
+  int handle, retval;
+  struct header_3 h;
 
-int main (int argc, char *argv[]) {
-    char fname[FNAMELENGTH]={""}; /* stream files */
-    int handle, retval;
-    struct header_3 h;
+  /* get filename*/
+  if (1 != sscanf(argv[optind], FNAMFORMAT, fname))
+    return -emsg(1);
 
+  /* get file header */
+  handle = open(fname, O_RDONLY);
+  if (-1 == handle)
+    return -emsg(3);
 
-    /* get filename*/
-    if (1!=sscanf(argv[optind],FNAMFORMAT,fname)) return -emsg(1);
-    
-    /* get file header */
-    handle=open(fname,O_RDONLY);
-    if (-1==handle) return -emsg(3);
+  retval = read(handle, &h, sizeof(h));
+  if (retval != sizeof(h))
+    return -emsg(4);
+  if (!retval)
+    return 5;
 
-    retval=read(handle,&h,sizeof(h));
-    if (retval!=sizeof(h)) return -emsg(4);
-    if (!retval) return 5; 
+  /* printf("length: %d\n",h->length); */
 
-    /* printf("length: %d\n",h->length); */
-
-    if ((h.tag!=TYPE_3_TAG) && (h.tag!=TYPE_3_TAG_U))  {
-	printf("0 0 0\n");
-    } else {
-	printf("%d %d %d \n",h.tag,h.bitsperentry,h.length);
-    }
-    return 0;
-
+  if ((h.tag != TYPE_3_TAG) && (h.tag != TYPE_3_TAG_U))
+  {
+    printf("0 0 0\n");
+  }
+  else
+  {
+    printf("%d %d %d \n", h.tag, h.bitsperentry, h.length);
+  }
+  return 0;
 }

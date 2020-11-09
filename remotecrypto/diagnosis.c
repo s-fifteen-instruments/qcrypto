@@ -44,14 +44,14 @@
 #include <sys/time.h>
 #include <math.h>
 
-#define FNAMELENGTH 200  /* length of file name buffers */
-#define FNAMFORMAT "%200s"   /* for sscanf of filenames */
-#define DEFAULT_OUTMODE 0 /* supply formatted output */
+#define FNAMELENGTH 200    /* length of file name buffers */
+#define FNAMFORMAT "%200s" /* for sscanf of filenames */
+#define DEFAULT_OUTMODE 0  /* supply formatted output */
 
-#define RAW3i_SIZE 1500000  /* more than enough? */
+#define RAW3i_SIZE 1500000 /* more than enough? */
 
-
-typedef struct header_3 {/* header for type-3 stream packet */
+typedef struct header_3
+{ /* header for type-3 stream packet */
     int tag;
     unsigned int epoc;
     unsigned int length;
@@ -74,19 +74,21 @@ char *errormessage[] = {
     "canot open input file",
     "input file too large",
     "error reading file (nothing there)", /* 5 */
-    "wrong file type (type 3 expected)" ,
+    "wrong file type (type 3 expected)",
     "stream 3 size inconsietency",
     "not 8 bits per entry",
 
 };
-int emsg(int code) {
+int emsg(int code)
+{
     fprintf(stderr, "%s\n", errormessage[code]);
     return code;
 };
 
-int decode[16] = { -1, 0, 1, -1,   2, -1, -1, -1,  3, -1, -1, -1,  -1, -1, -1, -1};
+int decode[16] = {-1, 0, 1, -1, 2, -1, -1, -1, 3, -1, -1, -1, -1, -1, -1, -1};
 
-int main (int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     char fname[FNAMELENGTH] = {""}; /* stream files */
     char *buffer3i, *inpointer;
     int handle, retval;
@@ -101,8 +103,10 @@ int main (int argc, char *argv[]) {
 
     /* parsing option */
     opterr = 0;
-    while ((opt = getopt(argc, argv, "q")) != EOF) {
-        switch (opt) {
+    while ((opt = getopt(argc, argv, "q")) != EOF)
+    {
+        switch (opt)
+        {
         case 'q': /* set quiet option */
             outmode = 1;
             break;
@@ -110,61 +114,79 @@ int main (int argc, char *argv[]) {
     }
 
     /* get buffer*/
-    if (!(buffer3i = (char*)malloc(RAW3i_SIZE))) return -emsg(2);
+    if (!(buffer3i = (char *)malloc(RAW3i_SIZE)))
+        return -emsg(2);
 
     /* get filename*/
-    if (1 != sscanf(argv[optind], FNAMFORMAT, fname)) return -emsg(1);
+    if (1 != sscanf(argv[optind], FNAMFORMAT, fname))
+        return -emsg(1);
 
     /* get file */
     handle = open(fname, O_RDONLY);
-    if (-1 == handle) return -emsg(3);
+    if (-1 == handle)
+        return -emsg(3);
 
     retval = read(handle, buffer3i, RAW3i_SIZE);
-    if (retval == RAW3i_SIZE) return -emsg(4);
-    if (!retval) return 5;
+    if (retval == RAW3i_SIZE)
+        return -emsg(4);
+    if (!retval)
+        return 5;
 
     /* consistency check at end */
     h = (struct header_3 *)buffer3i;
 
     /* printf("length: %d\n",h->length); */
 
-    if ( (h->tag != TYPE_3_TAG) && (h->tag != TYPE_3_TAG_U) ) return 6;
+    if ((h->tag != TYPE_3_TAG) && (h->tag != TYPE_3_TAG_U))
+        return 6;
     bytenum = (h->length * h->bitsperentry + 7) / 8 + sizeof(struct header_3);
     bytenum = (bytenum >> 2) + ((bytenum & 3) ? 1 : 0); /* words */
-    if (bytenum * 4 != retval) return 7;
+    if (bytenum * 4 != retval)
+        return 7;
     /* protocol bit match? */
-    if (h->bitsperentry != 8) return 8;
+    if (h->bitsperentry != 8)
+        return 8;
 
     /* close file */
     close(handle);
 
     /* prepare histogram */
     inpointer = (char *)(buffer3i + sizeof(struct header_3));
-    for (ui = 0; ui < 16; ui++) histo[ui] = 0;
+    for (ui = 0; ui < 16; ui++)
+        histo[ui] = 0;
 
     /* fill histo */
-    garbage1 = 0; garbage2 = 0; okcount = 0; total = h->length;
-    for (ui = 0; ui < h->length; ui++) {
-        b = decode[inpointer[ui] & 0xf]; /* bob */
+    garbage1 = 0;
+    garbage2 = 0;
+    okcount = 0;
+    total = h->length;
+    for (ui = 0; ui < h->length; ui++)
+    {
+        b = decode[inpointer[ui] & 0xf];        /* bob */
         a = decode[(inpointer[ui] >> 4) & 0xf]; /* alice */
-        if (a < 0) garbage1++;
-        if (b < 0) garbage2++;
-        if ((a >= 0) && (b >= 0)) {
+        if (a < 0)
+            garbage1++;
+        if (b < 0)
+            garbage2++;
+        if ((a >= 0) && (b >= 0))
+        {
             histo[a * 4 + b]++;
             okcount++;
         }
     }
 
-    switch (outmode) {
+    switch (outmode)
+    {
     case 0: /* formatted output */
         /* print  histogram */
         printf("det2:       V       -       H       +  \n");
         printf("-------------------------------------\n");
 
-        for (a = 0; a < 4; a++) {
+        for (a = 0; a < 4; a++)
+        {
             printf("det1= %c | %5d   %5d   %5d   %5d\n",
-                   detlabel[a], histo[4 * a], 
-                   histo[4 * a + 1], 
+                   detlabel[a], histo[4 * a],
+                   histo[4 * a + 1],
                    histo[4 * a + 2],
                    histo[4 * a + 3]);
         }
@@ -173,7 +195,8 @@ int main (int argc, char *argv[]) {
                okcount, total, garbage1, garbage2);
         break;
     case 1: /* only one line */
-        for (a = 0; a < 16; a++) printf("%d ", histo[a]); /* det histogram */
+        for (a = 0; a < 16; a++)
+            printf("%d ", histo[a]); /* det histogram */
         printf("%d %d %d %d\n", okcount, total, garbage1, garbage2);
         break;
     }

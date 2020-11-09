@@ -507,7 +507,7 @@ proc measurelocalcountrate {} { # measure local count rate with real hardware
 proc startinputpart1 {} {
     global programroot dataroot readerpid chopperpid negotiatemode protocol
     global locstat debugval rawdummyhandle detcorrection maxeventdiff
-    global t2logpipe  
+    global t2logpipe ï¿½
     global extclockopt
     if {$negotiatemode != 1} return
 
