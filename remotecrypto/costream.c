@@ -34,106 +34,106 @@
    usage:
       costream [-i type-2 streamfile] | [-d type-2 directory]
                [-I type-1 streamfile] | [-D type-1 directory]
-		       [-o type-3 streamfile] | [-f type-3 directory]
+               [-o type-3 streamfile] | [-f type-3 directory]
                [-O type-4 streamfile] | [-F type-4 directory]
                [-b type-3 bellfile]   | [-B type-3 directory]
-          	   -e startepoch [-q epochnumber]
-          	   [-k] [-K]
-          	   -t timediff
-          	   [-w coincidence window] [-u tracking window]
-          	   [-Q filterparameter for timedifference]
-          	   [-r bitnumber] [-R servoconstant]
-          	   [-p protocolindex]
-          	   [-l logfile1] [-L logfile2] [-m logfile3] [-M logfile4]
-          	   [-n logfile5] [-V verbosity]
-          	   [-T zeroeventpolicy ]
-          	   [-G flushmode ]
-          	   [-a accidendist ]
+               -e startepoch [-q epochnumber]
+               [-k] [-K]
+               -t timediff
+               [-w coincidence window] [-u tracking window]
+               [-Q filterparameter for timedifference]
+               [-r bitnumber] [-R servoconstant]
+               [-p protocolindex]
+               [-l logfile1] [-L logfile2] [-m logfile3] [-M logfile4]
+               [-n logfile5] [-V verbosity]
+               [-T zeroeventpolicy ]
+               [-G flushmode ]
+               [-a accidendist ]
                [-H histogramname ]
                [-h histogramlength ] 
-          	   [-S s1,s2,s3,s4 ]
-		  
+               [-S s1,s2,s3,s4 ]
+          
   DATA STREAM OPTIONS:
    -i infile2:      filename of type-2 packets. Can be a file or a socket
                     and has to supply binary data according to the type-2
-		            data spec from the chopper program.
+                    data spec from the chopper program.
    -d dir2:         All type-2 packets are saved into the directory dir2, with
                     the file name being the epoch (filling zero expanded)
-		            in hex. Filename is not padded at end.
+                    in hex. Filename is not padded at end.
    -I infile1:      filename of type-1 packets. Can be a file or a socket
                     and has to supply binary data according to the type-1
-		            data spec from the chopper2 program.
+                    data spec from the chopper2 program.
    -D dir1:         All type-1 packets are saved into the directory dir1, with
                     the file name being the epoch (filling zero expanded)
-		            in hex. Filename is not padded at end.
+                    in hex. Filename is not padded at end.
    -O fname4:       Outfile name for type 4 compressed sifting index files.
                     This option saves all type 4 packets into a the file/FIFO
-		            named fname4
+                    named fname4
    -F dir4:         All type-4 packets are saved into the directory dir4, with
                     the file name being the epoch (filling zero expanded)
-		            in hex. Filename is not padded at end.
+                    in hex. Filename is not padded at end.
    -o fname3:       same as option -O, but for type-3 files
    -f dir3:         same as option -d, but for type-3 files
    -b bellfile:     same as option -O, but for type-3 BELL files
    -B belldir:      same as option -d, but for type-3 BELL directories
    -k :             if set, type-2 streams are removed after consumption
-		                if the directory input has been chosen.
+                    if the directory input has been chosen.
    -K :             if set, type-1 streams are removed after consumption
-		                if the directory input has been chosen.
+                    if the directory input has been chosen.
   DATA MANAGEMENT OPTIONS:
    -e startepoch    epoch to start with.
    -w window        coincidence time window in 1/8 nsec
    -u window        coincidence time window in for tracking purpose.
    -Q filter        filter constant for tracking coincidences. positive numbers
                     refer to events, negative to time constants in
-		            microseconds. A value of zero switches tracking off; this
-		            is the default.
+                    microseconds. A value of zero switches tracking off; this
+                    is the default.
    -a accdist       distance between the real coincidence winow and the 
                     window for accidental coincidences in 1/8 nsec. default is
-		            160 (corresp. to 20 nsec)
-		    
+                    160 (corresp. to 20 nsec)
+            
    -p protocolindex defines the working protocol. 
                     Currently implemented:
                     0: service mode, emits all bits into stream 3 locally
-                  	1: standard BB84, emits only result in stream 3
-                  	(2: rich bb84: emits data and base/error info in stream 3)
-                  	3: deviceindep protocol with the 6det connected to
-                  	   the chopper side (low cnt rate)
-                  	4: deviceindep proto with te 4det connected to the
-                  	   chopper side
+                    1: standard BB84, emits only result in stream 3
+                    (2: rich bb84: emits data and base/error info in stream 3)
+                    3: deviceindep protocol with the 6det connected to
+                       the chopper side (low cnt rate)
+                    4: deviceindep proto with te 4det connected to the
+                       chopper side
                     5: BC protocol; similar to standard BB84, but handles basis differently.
    -q epochnum      defines how many epochs should be converted before the
                     program stops. When set to 0, it loops forever; this is
-		            the default.
+                    the default.
    -r bitnumber     number of bits for coding the difference in stream 4.
                     default is 8.
    -R servoconst    filter time constant for stream 4 bitlength optimizer.
                     The larger the num, the longer the memory of the filter.
-		            for num=0, no change will take place. This is also the
-		            default.
+                    for num=0, no change will take place. This is also the
+                    default.
    -t timediff      time difference between the t1 and t2 input streams. This
                     is a mandatory option, and defines the initial time
-		            difference between the two local reference clocks in
-		            multiples of 125ps.
+                    difference between the two local reference clocks in
+                    multiples of 125ps.
    -T zeropolicy    policy how to deal with no valid coincidences in present
                     epoch. Implemented:
-  		            0: do not emit a stream-3 and stream-4 file.
-  		            1: only emit a stream-4 file, no stream-3 file to notify
-              		   the other side to discard the corresp. package. This is 
-              		   the default.
-              		2: emit both stream-3 and stream-4 files and leave the
-              		   cleanup to a later stage
+                    0: do not emit a stream-3 and stream-4 file.
+                    1: only emit a stream-4 file, no stream-3 file to notify
+                       the other side to discard the corresp. package. This is 
+                       the default.
+                    2: emit both stream-3 and stream-4 files and leave the
+                       cleanup to a later stage
    -H histoname     defines a file containing the histogram of time differences
                     between different detector combinations. If this is empty,
                     no histogram is taken or sent. For a histogram to be
                     prepred the mode of operation must be 0 (service info) to
-		            obtain the full 4x4 matrix (or 4x6 for proto3+4).
+                    obtain the full 4x4 matrix (or 4x6 for proto3+4).
    -h histolen      number of epochs to be included in a histogram file.
                     default is 10.
    -S s1,s1,s3,s4   detector skew information. This option adds a detector-
                     dependent skew time to single-detection events. This option
-            		makes only sense for some nonstandard applications and
-            		is similar to the detector skew option in readevent3.c
+                    makes only sense for some nonstandard applications and
+                    is similar to the detector skew option in readevent3.c
    
   LOGGING & NOTIFICATION:
    -l logfile1:  notification target for consumed epochs of type-1 packets.
@@ -146,28 +146,28 @@
                  logged are epoch numbers in hex form.
    -n logfile5:  notification target for general information. The logging
                  content is defined by the verbosity level. If no file is
-		         specified, or - as a filename, STDOUT is chosen.
+                 specified, or - as a filename, STDOUT is chosen.
    -V level:     Verbosity level control. level is integer, and by default set
                  to 0. 
                  The logging verbosity criteria are:
-              	 level<0 : no output
-              	 0 : output bare hex names of processed data sets
-              	 1 : output handle and number of key events in this epoch
-              	 2 : same as option 1 but with text
-              	 3 : output epoch, processed events, sream-4 events, current
-              		 bit with for stream 4 compression with text
-              	 4 : output epoch, processed events, sream-4 events, current
-              	     bit with for stream 4 compression, servoed time
-              	     difference,estimated accidental coincidences, and
-              	     accepted coincidences with text
-              	 5 : same as verbo 4, but without any text inbetween
+                 level<0 : no output
+                 0 : output bare hex names of processed data sets
+                 1 : output handle and number of key events in this epoch
+                 2 : same as option 1 but with text
+                 3 : output epoch, processed events, sream-4 events, current
+                       bit with for stream 4 compression with text
+                 4 : output epoch, processed events, sream-4 events, current
+                       bit with for stream 4 compression, servoed time
+                       difference,estimated accidental coincidences, and
+                       accepted coincidences with text
+                 5 : same as verbo 4, but without any text inbetween
    -G mode       flushmode. If 0, no fflush takes place after each processed
                  packet. 
                  Different levels:
                  0: no flushing
                  1: logfile4 gets flushed
-              	 2: logfiles for stream3, stream4, standardlog get flushed
-              	 3: all logs get flushed
+                 2: logfiles for stream3, stream4, standardlog get flushed
+                 3: all logs get flushed
 
 
 
@@ -317,23 +317,22 @@ typedef struct protocol_details_B
     int bitsperentry4;            /* any transmitted data on the way back */
     int bitsperentry5;            /* number of bits in the test file */
     int detectorentries;          /* number of detectorentries; 16 for 4 detectors;
-                            this value -1 is used as bitmask for status */
+                                     this value -1 is used as bitmask for status */
     int expected2bits;            /* expected bits from the other side. Will cause an
-                            error if the streams don't natch this. */
+                                     error if the streams don't natch this. */
     int decsize;                  /* size of an int array which will contain the decision
-                       what to do. The array will be indexed by a value
-                       obtained by ORing the local bits in the least
-                       significant four bits with whatever was received from
-                       the remote stream 2, shifted by four bits to the left.
-                       The binary value of its
-                       content is a multi-bitfield structure, where the
-                       lsbits are a resulting entry3 pattern, the next bits
-                       are the resulting stream-4 pattern, followed by
-                       one bit for the decision wether the event should be
-                       ignored (0) or not (1), and another decision bit for
-                       classifying an event as key (0) or test (1) event. */
+                                     what to do. The array will be indexed by a value
+                                     obtained by ORing the local bits in the least
+                                     significant four bits with whatever was received from
+                                     the remote stream 2, shifted by four bits to the left.
+                                     The binary value of its content is a multi-bitfield structure, where the
+                                     lsbits are a resulting entry3 pattern, the next bits
+                                     are the resulting stream-4 pattern, followed by
+                                     one bit for the decision wether the event should be
+                                     ignored (0) or not (1), and another decision bit for
+                                     classifying an event as key (0) or test (1) event. */
     void (*fill_decision)(int *); /* helper function to fill decision table.
-                                    the argument is the decision array. */
+                                     the argument is the decision array. */
 } pd_B;
 
 #define PROTOCOL_MAXINDEX 5
@@ -356,12 +355,12 @@ void FILL_DEC_PROTO0(int *t)
 void FILL_DEC_PROTO1(int *t)
 {
     /* for standard BB84. parameter is 5 bits wide,
-      bits0..3 from stream 1, bit 4 from stream 2.
-      Result is one bit wide for stream-3 data (local raw key),
-      and 0 bits for stream-4 data (acknowledge).
-      The decision bit (bit 1) represents a basis
-      match. sequence stream 1: (lsb)V -H + (msb)
-      base bit from stream 2: 1 is +-, 0 is HV */
+       bits0..3 from stream 1, bit 4 from stream 2.
+       Result is one bit wide for stream-3 data (local raw key),
+       and 0 bits for stream-4 data (acknowledge).
+       The decision bit (bit 1) represents a basis
+       match. sequence stream 1: (lsb)V -H + (msb)
+       base bit from stream 2: 1 is +-, 0 is HV */
     int bbtab[32] = {0, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* base 0 */
                      0, 0, 3, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0};
     int i;
@@ -417,8 +416,7 @@ void FILL_DEC_PROTO4(int *t)
 void FILL_DEC_PROTO5(int *t)
 {
     /* modified BB84. parameter is 4 bits wide,
-      bits0..3 from stream 1. Result is
-                      two bits for stream-3 data (basis/result),
+      bits0..3 from stream 1. Result is two bits for stream-3 data (basis/result),
       and 0 bits for stream-4 data (acknowledge).
       The decision bit (bit 2) is always on for
       single detector events.
@@ -448,9 +446,9 @@ struct protocol_details_B proto_table[] = {
      32, /* size of combined pattern */
      &FILL_DEC_PROTO1},
     /* protocol 2: rich BB84. assumed sequence:  (LSB) V,-,H,+ (MSB);
-    HV basis: 0, +-basis: 1, result: V-: 0, result: H+: 1
-    if an illegal pattern was detected, a pair info pattern (2) or a
-    multi/no coincidence pattern (3) is recorded*/
+       HV basis: 0, +-basis: 1, result: V-: 0, result: H+: 1
+       if an illegal pattern was detected, a pair info pattern (2) or a
+       multi/no coincidence pattern (3) is recorded */
     /* for the moment, this is just a copy of protocol 0 */
     {
         /* protocol 2: all bits go everywhere */
@@ -464,8 +462,8 @@ struct protocol_details_B proto_table[] = {
     },
     {
         /* protocol 3: deviceindependent - chopper on 6det side.
-        chopper transmits 1-out-of-6 info, costream returns
-        1-out-of-5 to first side. */
+           chopper transmits 1-out-of-6 info, costream returns
+           1-out-of-5 to first side. */
         1,
         3,
         4,
@@ -499,8 +497,7 @@ struct protocol_details_B proto_table[] = {
    corresponding detector events. An array of 17 (25) entries contains events
    for all valid detector combinations. the 25th entry corresponds to
    detector events which do not correspond to pairs.
-   old: 17th column, but that was never used so I changed it to 25
-*/
+   old: 17th column, but that was never used so I changed it to 25 */
 
 unsigned int histo[25][DEFAULT_HISTODEPTH]; /* array for counting */
 int histos_to_go;
@@ -844,9 +841,9 @@ int close_epoch()
             optimal_width =
                 (int)((log((float)average_distance) / log(2.) + 2.2117) * 16.);
             /* do integer version of (log(agv)/log(2)+2.2117)*16 */
-            /*tmp=average_distance;optimal_width=0;
-              while (tmp>31) {tmp /=2; optimal_width++;};
-              optimal_width = optimal_width*16+log_correcttable[tmp&0xf];*/
+            /* tmp=average_distance;optimal_width=0;
+               while (tmp>31) {tmp /=2; optimal_width++;};
+               optimal_width = optimal_width*16+log_correcttable[tmp&0xf];*/
             if (filterconst_stream4)
             {
                 type4bitwidth_long +=
@@ -973,8 +970,8 @@ int close_epoch()
                     te, ecnt2, thisepoch_siftevents, type4bitwidth);
             break;
         case 4: /* log epoch, inlength, outlength, bitwidth for output,
-               servoed time difference, est accidentals, accepted
-               coincidences w text */
+                   servoed time difference, est accidentals, accepted
+                   coincidences w text */
             fprintf(loghandle[0],
                     "epoch: %08x, 2-evnts: %d, 4-evnts: %d, new bw4: %d, ft: %li, acc: %i, true: %i, 1-events: %d\n",
                     te, ecnt2, thisepoch_siftevents, type4bitwidth,
