@@ -1520,7 +1520,7 @@ int prepare_dualpass(char *receivebuf)
         { /* not worth going */
             fprintf(fhandle[5], "%08x %d %d %.4f %d\n",
                     kb->startepoch, kb->initialbits, 0, localerror, kb->numberofepochs);
-            fflush(handle[5]);
+            fflush(fhandle[5]);
             remove_thread(kb->startepoch);
             return 0;
         }
