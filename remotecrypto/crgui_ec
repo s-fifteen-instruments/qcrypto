@@ -1483,57 +1483,57 @@ proc upgs { } { # update gnuplot control file
     set plotelems 0 ; # counts number of elements to display
     set outstring "plot \'$diagdatafile\' "
     set costreamhistoopt "" ; # for cases 1-3
-        switch $mdisp1 {
-	1 { # rates: display collective info
-	    for {set i 1 } {$i < 5} {incr i } {
-		if {$cbasel($i) == 1 } {
-		    if {$plotelems > 0} { append outstring {, '' } }
-		    append outstring "using [expr $i+16] not w l lt $i lw 3" 
-		    set plotelems 1
-		}
-	    }
-	}
-	2 { # QUBER
-	    append outstring {using 0:(($1+$6+$11+$16)/($1+$6+$11+$16+$3+$8+$9+$14)) not w l lt 1 lw 3}
-	    set plotelems 1
-	}
-	3 { # histos
-	    for {set i 0 } {$i < 16} {incr i } {
-		if { $cbcsel($i) == 1 } { 
-		    if {$plotelems >0} {append outstring {, '' } }
-		    append outstring "using [expr $i+1] not w l lt $i " 
-		    set plotelems 1
-		}
-	    }
-	}
-	4 { # TIMING HISTOGRAMS
-	    set costreamhistoopt "-H $dataroot/histos/tfli"
-	    exec echo "set terminal tkcanvas ; set output \"$gnucanvas\"" >$gnucontrol
-	    exec echo "set xrange \[-10:10\] " >> $gnucontrol
-	    set outstring "plot \'$diagdatafile2\' "
-	    set gg {2 3 4 5 6 10 14} ; # column numbers in histogram
-	    set commt {"1-1" "1-2" "1-3" "1-4" "2-1" "3-1" "4-1"}
-	    for {set i 0 } {$i < 7 } {incr i } {
-		if {$plotelems > 0} { append outstring {, '' } }
-		append outstring "using (\$1/8):[lindex $gg $i] title \"[lindex $commt $i]\" w l lt $i " 
-		set plotelems 1
-	    }
-	    
-	}
-	5 { # SINGLES
-	    set outstring "plot \'$diagdatafile3\' "
-	    for {set i 0 } {$i < 5} {incr i } {
-		if {$sisel($i) == 1 } {
-		    if {$plotelems > 0} { append outstring {, '' } }
-		    if {$i == 0} {set tit \"sum\"
-		    } else { set tit "\"det $i\"" }
-		    # colors: sum blk, d1: green, d2: red, d3: yel/bn, d4: blue
-		    set j [lindex { 7 3 1 4 2 } $i]
-		    append outstring "using [expr $i+1] title $tit w l lt $j lw 3" 
-		    set plotelems 1
-		}
-	    }
-	}
+    switch $mdisp1 {
+        1 { # rates: display collective info
+            for {set i 1 } {$i < 5} {incr i } {
+            if {$cbasel($i) == 1 } {
+                if {$plotelems > 0} { append outstring {, '' } }
+                append outstring "using [expr $i+16] not w l lt $i lw 3" 
+                set plotelems 1
+            }
+            }
+        }
+        2 { # QUBER
+            append outstring {using 0:(($1+$6+$11+$16)/($1+$6+$11+$16+$3+$8+$9+$14)) not w l lt 1 lw 3}
+            set plotelems 1
+        }
+        3 { # histos
+            for {set i 0 } {$i < 16} {incr i } {
+            if { $cbcsel($i) == 1 } { 
+                if {$plotelems > 0} {append outstring {, '' } }
+                append outstring "using [expr $i+1] not w l lt $i " 
+                set plotelems 1
+            }
+            }
+        }
+        4 { # TIMING HISTOGRAMS
+            set costreamhistoopt "-H $dataroot/histos/tfli"
+            exec echo "set terminal tkcanvas ; set output \"$gnucanvas\"" >$gnucontrol
+            exec echo "set xrange \[-10:10\] " >> $gnucontrol
+            set outstring "plot \'$diagdatafile2\' "
+            set gg {2 3 4 5 6 10 14} ; # column numbers in histogram
+            set commt {"1-1" "1-2" "1-3" "1-4" "2-1" "3-1" "4-1"}
+            for {set i 0 } {$i < 7 } {incr i } {
+            if {$plotelems > 0} { append outstring {, '' } }
+            append outstring "using (\$1/8):[lindex $gg $i] title \"[lindex $commt $i]\" w l lt $i " 
+            set plotelems 1
+            }
+            
+        }
+        5 { # SINGLES
+            set outstring "plot \'$diagdatafile3\' "
+            for {set i 0 } {$i < 5} {incr i } {
+            if {$sisel($i) == 1 } {
+                if {$plotelems > 0} { append outstring {, '' } }
+                if {$i == 0} {set tit \"sum\"
+                } else { set tit "\"det $i\"" }
+                # colors: sum blk, d1: green, d2: red, d3: yel/bn, d4: blue
+                set j [lindex { 7 3 1 4 2 } $i]
+                append outstring "using [expr $i+1] title $tit w l lt $j lw 3" 
+                set plotelems 1
+            }
+            }
+        }
     }
 
     # print out if there is something

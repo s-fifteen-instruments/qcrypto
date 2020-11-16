@@ -1,12 +1,12 @@
 /* transferd.c : Part of the quantum key distribution software for serving
                  as a classical communication gateway between the two sides.
-		 Description see below. Version as of 20070101
+                 Description see below. Version as of 20070101
 
  Copyright (C) 2005-2006, 2020 Christian Kurtsiefer, National University
                          of Singapore <christian.kurtsiefer@gmail.com>
 
  This source code is free software; you can redistribute it and/or
- modify it under the terms of the GNU Public License as published 
+ modify it under the terms of the GNU Public License as published
  by the Free Software Foundation; either version 2 of the License,
  or (at your option) any later version.
 
@@ -34,43 +34,43 @@
 
  usage: transferd -d sourcedirectory -c commandsocket -t targetmachine
                   -D destinationdir -l notificationfile -s sourceIP
-		  [-e ec_in_pipe -E ec_out_pipe ]
-		  [-k] 
-		  [-m messagesource -M messagedestintion ]
-		  [-p portnumber]
-		  [-v verbosity]
+                  [-e ec_in_pipe -E ec_out_pipe ]
+                  [-k]
+                  [-m messagesource -M messagedestintion ]
+                  [-p portnumber]
+                  [-v verbosity]
 
  parameters:
-  
+
   -d srcdir:        source directory for files to be transferred
   -c commandpipe:   where to create a fifo in the file system to
                     listen to files to be transferred. the path has to be
-		    absolute.
+                    absolute.
   -t target:        IP address of target machine
   -D destdir:       destination directory
   -l notify:        if a packet arrives and has been saved, a notification
                     (the file name itself) is sent to the file or pipe named
-		    in the parameter of this option
+                    in the parameter of this option
   -s sourceIP:      listen to connections on the local ip identified by the
                     paremeter. By default, the system listens on all ip
-		    addresses of the machine.
+                    addresses of the machine.
   -k:               killoption. If this is activated, a file gets destroyed in
                     the source directory after it has been sent.
   -m src:           message source pipe. this opens a local fifo in the file
                     tree where commands can be tunneled over to the other side.
   -M dest:          if a command message is sent in from the other side, it
                     will be transferred into the file or pipe named in the
-		    parameter of this file.
+                    parameter of this file.
   -p portnum:       port number used for communication. By default, this is
                     port number 4852.
   -v verbosity:     choose verbosity. 0: no normal output to stdout
                     1: connect/disconnect to stdout
-		    2: talk about receive/send events
-		    3: include file error events
+                    2: talk about receive/send events
+                    3: include file error events
   -e ec_in_pipe:    pipe for receiving packets from errorcorrecting demon
   -E ec_out_pipe:   pipe to send packes to the error correcting deamon
 
-		    
+
   momentarily, the communication is implemented via tcp/ip packets. the program
   acts either as a server or a client, depending on the status of the other
   side.  if client mode fails, it goes into server mode. if no connection is
@@ -79,13 +79,13 @@
   Transfer rationale: The same channel will be used for messages, files and
   error correction packets. Since there is no simple way to extract the length
   of the file for all possible future extensions, the transmission of whatever
-  is preceeded by a header involving a 
+  is preceeded by a header involving a
      typedef struct stream_header {int type;
                                    unsigned int length; };
   were type is 0 for simple files, 1 for messages, 2 for errc packets and
   length designates the
   length of the data in bytes. In a later stage, the messages might be sent via
-  an out-of-band marker, but this is currently not implemented. 
+  an out-of-band marker, but this is currently not implemented.
 
 History: first test seems to work 6.9.05chk
   stable version 16.9. started modifying for errorcorrecting packets
@@ -96,21 +96,21 @@ To Do:
   comm options.
 - check messaging system ok, but what happens with emty messages?
 - allow for other file types - added another port....
-- clean up debugging code 
+- clean up debugging code
 
 */
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
 #include <arpa/inet.h>
-#include <sys/stat.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/select.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #undef DEBUG
 
@@ -155,7 +155,8 @@ typedef struct errc_header
 } eh;
 
 /* global variables for IO handling */
-char fname[10][FNAMELENGTH] = {"", "", "", "", "", "", "", "", "", ""}; /* stream files */
+char fname[10][FNAMELENGTH] = {
+	"", "", "", "", "", "", "", "", "", ""}; /* stream files */
 char ffnam[10][FNAMELENGTH + 10], ffn2[FNAMELENGTH + 10];
 char f3tmpname[FNAMELENGTH + 10]; /* stores temporary file name */
 int killmode = DEFAULT_KILLMODE;  /* if !=1, delete infile after use */
@@ -396,8 +397,8 @@ int main(int argc, char *argv[])
 	if (!cmdhandle)
 		return -emsg(18);
 	/*cmdhandle=open(fname[1],FIFOMODE);
-    if (cmdhandle==-1) return -emsg(18);
-    keepawake_handle= open(fname[1],DUMMYMODE); */
+if (cmdhandle==-1) return -emsg(18);
+keepawake_handle= open(fname[1],DUMMYMODE); */
 	/* keep server alive */
 
 	/* message pipe */
@@ -489,13 +490,11 @@ int main(int argc, char *argv[])
 	}
 	if (listen(recskt, RECEIVE_BACKLOG))
 		return -emsg(32);
-
 	/* try to test directory existence */
 	if (stat(fname[0], &dirstat))
 		return -emsg(27); /* src directory */
 	if ((dirstat.st_mode & S_IFMT) != S_IFDIR)
 		return -emsg(28); /* no dir */
-
 	if (stat(fname[3], &dirstat))
 		return -emsg(29); /* src directory */
 	if ((dirstat.st_mode & S_IFMT) != S_IFDIR)
@@ -544,8 +543,7 @@ int main(int argc, char *argv[])
 		else
 		{										 /* timeout has occured. attempt to make client connection */
 			fcntl(sendskt, F_SETFL, O_NONBLOCK); /* prepare nonblock mode */
-			retval = connect(sendskt, (struct sockaddr *)&sendadr,
-							 sizeof(sendadr));
+			retval = connect(sendskt, (struct sockaddr *)&sendadr, sizeof(sendadr));
 			/* check for anythinng else than EINPROGRESS */
 			if (retval)
 			{ /* an error has occured */
@@ -566,13 +564,11 @@ int main(int argc, char *argv[])
 					FD_ZERO(&writequeue);
 					FD_SET(sendskt, &writequeue);
 					timeout = HALFSECOND;
-					retval = select(FD_SETSIZE, (fd_set *)0,
-									&writequeue, (fd_set *)0, &timeout);
+					retval = select(FD_SETSIZE, (fd_set *)0, &writequeue, (fd_set *)0, &timeout);
 					if (retval)
 					{
 						socklen = sizeof(retval);
-						if (getsockopt(sendskt, SOL_SOCKET,
-									   SO_ERROR, &retval, &socklen))
+						if (getsockopt(sendskt, SOL_SOCKET, SO_ERROR, &retval, &socklen))
 							return -emsg(38);
 						if (retval)
 						{
@@ -644,7 +640,8 @@ int main(int argc, char *argv[])
 				case 0: /* beginning with header */
 					receivemode = 1;
 				case 1: /* finishing header */
-					retval = read(commskt, &((char *)&rhead)[receiveindex],
+					retval = read(commskt,
+								  &((char *)&rhead)[receiveindex],
 								  sizeof(rhead) - receiveindex);
 #ifdef DEBUG
 					fprintf(debuglog, "tcp receive stage 1:%d bytes\n", retval);
@@ -687,15 +684,21 @@ int main(int argc, char *argv[])
 					receiveindex = 0;
 					receivemode = 3;
 #ifdef DEBUG
-					fprintf(debuglog, "tcp receive before stage3, expect %d bytes\n", rhead.length);
+					fprintf(debuglog,
+							"tcp receive before stage3, expect %d bytes\n",
+							rhead.length);
 					fflush(debuglog);
 #endif
 					break;
 				case 3: /* read more */
-					retval = read(commskt, &recbf[receiveindex],
+					retval = read(commskt,
+								  &recbf[receiveindex],
 								  MIN(LOC_BUFSIZE, rhead.length) - receiveindex);
 #ifdef DEBUG
-					fprintf(debuglog, "tcp rec stage 3:%d bytes, wanted:%d\n", retval, MIN(LOC_BUFSIZE, rhead.length) - receiveindex);
+					fprintf(debuglog,
+							"tcp rec stage 3:%d bytes, wanted:%d\n",
+							retval,
+							MIN(LOC_BUFSIZE, rhead.length) - receiveindex);
 					fflush(debuglog);
 #endif
 					if (retval == -1)
@@ -729,20 +732,18 @@ int main(int argc, char *argv[])
 					case 0: /* incoming long stream */
 							/*if (verbosity >1) */
 #ifdef DEBUG
-						fprintf(debuglog, "got file via tcp, len:%d\n",
-								rhead.length);
+						fprintf(debuglog, "got file via tcp, len:%d\n", rhead.length);
 						fflush(debuglog);
 #endif
 						/* open target file */
 						strncpy(ffnam[3], fname[3], FNAMELENGTH);
 						atohex(&ffnam[3][strlen(ffnam[3])], rhead.epoch);
-						destfile =
-							open(f3tmpname, TARGETFILEMODE, FILE_PERMISSIONS);
+						destfile = open(f3tmpname, TARGETFILEMODE, FILE_PERMISSIONS);
 						if (destfile < 0)
 						{
 							fprintf(debuglog, "destfile  val: %x\n", destfile);
-							fprintf(debuglog, "file name: %s, len: %d\n",
-									ffnam[3], rhead.length);
+							fprintf(
+								debuglog, "file name: %s, len: %d\n", ffnam[3], rhead.length);
 							fprintf(debuglog, "errno on opening: %d\n", errno);
 							fflush(debuglog);
 							destfile = open("transferdump", O_WRONLY);
@@ -786,11 +787,9 @@ int main(int argc, char *argv[])
 							if (!msgouthandle)
 								return -emsg(45);
 							/* should we add a newline? */
-							retval = fwrite(recbf, sizeof(char),
-											rhead.length, msgouthandle);
+							retval = fwrite(recbf, sizeof(char), rhead.length, msgouthandle);
 #ifdef DEBUG
-							fprintf(debuglog, "retval from fwrite is :%d...",
-									retval);
+							fprintf(debuglog, "retval from fwrite is :%d...", retval);
 							fflush(debuglog);
 #endif
 							if (retval != (int)rhead.length)
@@ -798,7 +797,8 @@ int main(int argc, char *argv[])
 							fflush(msgouthandle);
 							fclose(msgouthandle);
 #ifdef DEBUG
-							fprintf(debuglog, "message>>%40s<< sent to msgouthandle.\n", recbf);
+							fprintf(
+								debuglog, "message>>%40s<< sent to msgouthandle.\n", recbf);
 							for (ii = 0; ii < (int)rhead.length; ii++)
 							{
 								fprintf(debuglog, " %02x", recbf[ii]);
@@ -835,7 +835,8 @@ int main(int argc, char *argv[])
 					packinmode = 1;
 					erci_idx = 0;
 				case 1: /* finish reading header */
-					retval = read(ercinhandle, &ercbf[erci_idx],
+					retval = read(ercinhandle,
+								  &ercbf[erci_idx],
 								  sizeof(struct errc_header) - erci_idx);
 					if (retval == -1)
 					{
@@ -852,7 +853,8 @@ int main(int argc, char *argv[])
 						return -emsg(73);
 					packinmode = 3; /* erci_idx continues on same buffer */
 				case 3:				/* read more data */
-					retval = read(ercinhandle, &ercbf[erci_idx],
+					retval = read(ercinhandle,
+								  &ercbf[erci_idx],
 								  MIN(LOC_BUFSIZE2, ehead->length) - erci_idx);
 					if (retval == -1)
 					{
@@ -956,7 +958,9 @@ int main(int argc, char *argv[])
 					/* read message */
 					retval = read(msginhandle, message, MESSAGELENGTH);
 #ifdef DEBUG
-					fprintf(debuglog, "got local message in event; retval frm read:%d\n", retval);
+					fprintf(debuglog,
+							"got local message in event; retval frm read:%d\n",
+							retval);
 					fflush(debuglog);
 #endif
 					if (retval == -1)
@@ -989,11 +993,14 @@ int main(int argc, char *argv[])
 #endif
 					break;
 				case 1: /*  write header */
-					retval = write(commskt, &((char *)&shead)[writeindex],
+					retval = write(commskt,
+								   &((char *)&shead)[writeindex],
 								   sizeof(shead) - writeindex);
 #ifdef DEBUG
-					fprintf(debuglog, "sent header, want:%d, sent:%d\n",
-							sizeof(shead) - writeindex, retval);
+					fprintf(debuglog,
+							"sent header, want:%d, sent:%d\n",
+							sizeof(shead) - writeindex,
+							retval);
 					fflush(debuglog);
 #endif
 					if (retval == -1)
@@ -1003,13 +1010,15 @@ int main(int argc, char *argv[])
 						break;
 					writeindex = 0;
 					writemode = 2; /* next level... */
-								   /* printf("written header\n"); */
-				case 2:			   /* write data */
-					retval = write(commskt, &sendbf[writeindex],
-								   shead.length - writeindex);
+					/* printf("written header\n"); */
+				case 2: /* write data */
+					retval = write(commskt, &sendbf[writeindex], shead.length - writeindex);
 #ifdef DEBUG
-					fprintf(debuglog, "send data;len: %d, retval: %d, idx %d\n",
-							shead.length, retval, writeindex);
+					fprintf(debuglog,
+							"send data;len: %d, retval: %d, idx %d\n",
+							shead.length,
+							retval,
+							writeindex);
 					fflush(debuglog);
 #endif
 					if (retval == -1)
@@ -1073,16 +1082,16 @@ int main(int argc, char *argv[])
 				srcfile = open(ftnam, READFILEMODE);
 				if (srcfile == -1)
 				{
-					fprintf(debuglog, "return val open: %x, errno: %d\n",
-							srcfile, errno);
-					fprintf(debuglog, "file name: >%s<\n",
-							ftnam);
+					fprintf(debuglog, "return val open: %x, errno: %d\n", srcfile, errno);
+					fprintf(debuglog, "file name: >%s<\n", ftnam);
 					return -emsg(53);
 				}
 				retval = read(srcfile, filebf, LOC_BUFSIZE);
 				close(srcfile);
 #ifdef DEBUG
-				fprintf(debuglog, "prepare for sending file; read file with return value %d\n", retval);
+				fprintf(debuglog,
+						"prepare for sending file; read file with return value %d\n",
+						retval);
 				fflush(debuglog);
 #endif
 				if (retval != srcfilestat.st_size)
