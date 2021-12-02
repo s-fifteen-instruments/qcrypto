@@ -17,11 +17,11 @@ Creating recipes
 
 The data structures of packets in communitcations are:
 
-.. c:struct:: header_1 {int tag;
-		         unsigned int epoc;
-		         unsigned int length;
-		         int bitsperentry;
-		         int basebits;}
+.. c:struct:: header_1 
 
-
+   .. c:var:: int tag
+   .. c:var:: unsigned int epoc
+   .. c:var:: unsigned int length
+   .. c:var:: int bitsperentry
+   .. c:var:: int basebits
 
