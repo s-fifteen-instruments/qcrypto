@@ -6,7 +6,7 @@ Usage
 Installation
 ------------
 
-To use Lumache, first install it using pip:
+To use qcrypto, first pull it from github using:
 
 .. code-block:: console
 

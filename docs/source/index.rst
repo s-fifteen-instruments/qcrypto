@@ -26,5 +26,10 @@ Contents
 
 .. toctree::
 
+   license
+   prerequisites
+   requirements
+   rationale
    usage
-   api
+   functions
+   gui

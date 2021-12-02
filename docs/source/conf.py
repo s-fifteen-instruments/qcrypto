@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'Guardian'
+project = 'Qcrypto'
 copyright = '2021, S-Fifteen'
 author = 'S-Fifteen'
 
