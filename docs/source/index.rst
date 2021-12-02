@@ -37,3 +37,5 @@ Contents
    usage
    functions
    gui
+   api
+   
