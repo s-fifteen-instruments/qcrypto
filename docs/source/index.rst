@@ -8,6 +8,10 @@ here is merely for reference into the inner workings of the `QKDServer <https://
 which calls upon these programs.
 Check out the :doc:`usage` section for information on usage, including how to :ref:`install <installation>` the project.
 
+.. tip::
+   For reference on C Domains and Python domains in sphinx, refer to `Sphinx Docs`_
+   
+.. _Sphinx Docs: https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#c-domain 
 
 a Python library for cooks and food lovers
 that creates recipes mixing random ingredients.

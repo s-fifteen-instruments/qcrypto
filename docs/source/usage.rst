@@ -10,25 +10,18 @@ To use qcrypto, first pull it from github using:
 
 .. code-block:: console
 
-   (.venv) $ pip install lumache
+   (.venv) $ git clone https://github.com/s-fifteen-instruments/qcrypto
 
 Creating recipes
 ----------------
 
-To retrieve a list of random ingredients,
-you can use the ``lumache.get_random_ingredients()`` function:
+The data structures of packets in communitcations are:
 
-.. autofunction:: lumache.get_random_ingredients
+.. c:struct:: header_1 {int tag;
+		         unsigned int epoc;
+		         unsigned int length;
+		         int bitsperentry;
+		         int basebits;}
 
-The ``kind`` parameter should be either ``"meat"``, ``"fish"``,
-or ``"veggies"``. Otherwise, :py:func:`lumache.get_random_ingredients`
-will raise an exception.
 
-.. autoexception:: lumache.InvalidKindError
-
-For example:
-
->>> import lumache
->>> lumache.get_random_ingredients()
-['shells', 'gorgonzola', 'parsley']
 
