@@ -49,9 +49,11 @@ recorded. At the moment, this format only works with four possible
 detectors. For future use, a combination of up to eight detectors might be
 considered, contained in the lower 8 bits of lsb.
 
--------------------------------------------------------------------
-|MSW                            |     lsw                         |
--------------------------------------------------------------------
+::
+	-------------------------------------------------------------------
+	|MSW                            |     lsw                         |
+	-------------------------------------------------------------------
+	
 Timing: (32 msb) MSW + (17 msb) LSW
 Detector: (4 lsb) LSW
 Unused: (11 bits) LSW
@@ -146,18 +148,19 @@ used for basic time-difference encoding in the data section. The <basebits>
 entry gives the number of basis bits transmitted in this stream and is 1 for
 BB84 type protocols. protocol contains info about the protocol used in the
 compressor. Currently supported are:
- 0: service protocol. both type-2 stream and type-3 stream
-    contain the raw detector information.
- 1: BB84 standard protocol. The type-2 stream contains one bit
-    of basis information, the type-3 stream one bit of
-    value information. The detector sequence is hard coded in
-    the header. (LSB) V,-,H,+ (MSB). Expected coincidence between 
- 2: rich BB84. As before, but two  bits are transmitted. if the
-    msb is 0, the lsb has BB84 meaning, if msb is 1, a multi-
-    or no-coincidence event was recorded (lsb=1), or a pair
-    coincidence was detected (lsb=0).
- 4: extended devindep, 3 bits (1 out of 5)
- 5: extended devindep, no base info is sent.
+ 
+0: 	service protocol. both type-2 stream and type-3 stream
+	contain the raw detector information.
+1: 	BB84 standard protocol. The type-2 stream contains one bit
+	of basis information, the type-3 stream one bit of
+	value information. The detector sequence is hard coded in
+	the header. (LSB) V,-,H,+ (MSB). Expected coincidence between 
+2: 	rich BB84. As before, but two  bits are transmitted. if the
+	msb is 0, the lsb has BB84 meaning, if msb is 1, a multi-
+	or no-coincidence event was recorded (lsb=1), or a pair
+	coincidence was detected (lsb=0).
+4:	extended devindep, 3 bits (1 out of 5)
+5: 	extended devindep, no base info is sent.
 	 
 
 
