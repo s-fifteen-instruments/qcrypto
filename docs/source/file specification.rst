@@ -49,7 +49,10 @@ recorded. At the moment, this format only works with four possible
 detectors. For future use, a combination of up to eight detectors might be
 considered, contained in the lower 8 bits of lsb.
 
+Paragraph:
+
 ::
+
 	-------------------------------------------------------------------
 	|MSW                            |     lsw                         |
 	-------------------------------------------------------------------
