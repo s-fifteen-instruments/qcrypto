@@ -103,11 +103,17 @@ processing overhead and the ability to partition raw data into epochized
 packets. format (as saved in binary version on a x86 architecture; ints and
 unsigned ints refer to 32 bit wide integers):
 
-        struct header_1 {int tag;
-		         unsigned int epoc;
-		         unsigned int length;
-		         int bitsperentry;
-		         int basebits;}
+	struct header_1 {
+		
+		int tag;
+		
+		unsigned int epoc;
+		
+		unsigned int length;
+
+		int bitsperentry;
+
+		int basebits;}
 
 <tag> is either 1 for simple raw data or 0x101 for raw data with an extended
 epoch. <length> is optional and counts the number of 64 bit entries to

@@ -36,3 +36,5 @@ running; target name has to be "errcd". This can be done with the command
 ::
 
 	ln -s ../ec2/ecd2 errcd
+	
+	
