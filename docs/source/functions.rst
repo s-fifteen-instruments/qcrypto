@@ -272,18 +272,14 @@ where
 	0 : output bare hex names of processed data sets
 	1 : output handle and number of key events in this epoch
 	2 : same as option 1 but with text
-	3 : output epoch, processed events, sream-4 events, current
-		bit with for stream 4 compression with text
-	4 : output epoch, processed events, sream-4 events, current
-		bit with for stream 4 compression, servoed time
-		difference,estimated accidental coincidences, and
-		accepted coincidences with text
+	3 : output epoch, processed events, sream-4 events, current bit with for stream 4 compression with text
+	4 : output epoch, processed events, sream-4 events, current bit with for stream 4 compression, servoed time difference,estimated accidental coincidences, and accepted coincidences with text
 	5 : same as verbo 4, but without any text inbetween
 
 .. option::	-G <flushmode>
 
 	If 0, no fflush takes place after each processed packet
-		Different levels:
+	Different levels:
 	
 	0: no flushing
 	1: logfile4 gets flushed
@@ -361,15 +357,12 @@ where
 
 	Selection of the protocol type. implemented:
 	
-	0: service mode, emits all bits into stream 3 locally
-	  for those entries marked in stream 4
-	1: selects basebits from stream 3in which are marked
-	  in stream4
+	0: service mode, emits all bits into stream 3 locally for those entries marked in stream 4
+	1: selects basebits from stream 3in which are marked in stream4
 	2: same as mode 0
 	3: device-independent protocol, this side has 6 detectors
 	4: device-independent proto, this side has 4 detectors
-	5: BC version of proto1, just copies received tags
-	  from stream 3 into rawkey
+	5: BC version of proto1, just copies received tags from stream 3 into rawkey
 	  
 .. option::	-m <logfile3>
 
