@@ -13,3 +13,4 @@ remotecrypto/transferd
 errorcorrection/ecd2
 errorcorrection/ecd2.o
 errorcorrection/rnd.o
+docs/source/functions_old.rst
