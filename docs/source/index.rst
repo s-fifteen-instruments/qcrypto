@@ -37,6 +37,3 @@ Contents
    file specification
    usage
    functions
-   gui
-   api
-   
