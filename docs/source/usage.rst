@@ -42,7 +42,7 @@ chopper2.c: Partitioner on the high count side
 
   Similar to chopper, this code partitions raw data generated from the
   readevents program, but does no timing compression, as it is suposed to be
-  digested by the costream program directly. Typically it generates t1 files
+  digested by the costream program directly. Typically it generates T1 files
   into a directory, and notifies a consumer program via a log file or a text
   pipe.
 
@@ -70,9 +70,25 @@ pfind.c: Initial timing difference finder.
 
 costream.c: Main coincidence identification / sifting code / clock tracking
 
+  This is the main code that compares the basis information from the T2 files with
+  the T1 files and identifies the coincidences, and compare the basis depending on
+  the mode of operation. For matching basis, the result (raw key) is stored in a T3 file 
+  and the basis match identification is saved in a T4 file which will be sent back
+  to the low count side.
+  
+  This code also does clock tracking and offsets small drifts in the time 
+  difference between both sides.
+
 splicer.c: carries out the final sifting stage on the low count rate side
- 
+	
+  With the basis match T4 input file and the T3 input file, this code sifts out
+  result for the local and saves it to another T3 file.
+  
 crgui_ec: TCL/Tk GUI to tie all the codes together.
+
+	This GUI generates the local pipes, files and directories and calls all the 
+	programs in the correct sequence in order to start the QKD engine. It also sends
+   the appropriate messages to negotiate if the party will be the low or high	count side.
 
 localparams: A complementary file for the gui
 
@@ -113,6 +129,6 @@ gui_spec: An incomplete writeup of communication snippets between the GUI
 convertdate: A short shell script to convert an epoch index into a
  human-readable date
 
-convertdate_back: A shell script to convert soe time/date string into an epoch
+convertdate_back: A shell script to convert some time/date string into an epoch
 
 
