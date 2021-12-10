@@ -322,7 +322,7 @@ The following file types seem to be useful:
 
 	The <tag> entry is  either 0x7 for local epoc or 0x107 for an extended epoc
 	definition. The <epoch> entry represents the first data epoch used for
-	generating this key file; <numberofepochs> contains the nmber of processed
+	generating this key file; <numberofepochs> contains the number of processed
 	epochs for this file, and represents what was passed as a parameter to the
 	error correction deamon. Finally, <numberofbits> contains the number of bits
 	following the header. Bits get filled in 32 bit wide words, starting from the

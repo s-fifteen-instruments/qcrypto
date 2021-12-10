@@ -3,8 +3,7 @@ License
 
 LICENSE
 
- Copyright (C) 2005-2006 Christian Kurtsiefer, National University
-                         of Singapore <christian.kurtsiefer@gmail.com>
+ Copyright (C) 2005-2006 Christian Kurtsiefer, National University of Singapore <christian.kurtsiefer@gmail.com>
 
  This source code is free software; you can redistribute it and/or
  modify it under the terms of the GNU Public License as published 
