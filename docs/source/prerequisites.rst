@@ -17,7 +17,11 @@ from external directories into this one are needed:
 
 A symbolic link to the current readevents program should be set under the name
 "readevents". This can be done e.g. with the command
- ln -s ../readevents4/readevents4a ./readevents
+
+::
+
+	ln -s ../readevents4/readevents4a ./readevents
+
 The readevents program is the user side part of the interface to talk to the
 timestamp card. It tries to efficiently (as in avoidance of memcpy type code)
 parse the raw data containing the phase pattern, coarse and fine counter info,
@@ -28,4 +32,6 @@ the crypto applicatons.
 
 Another symbolic link is needed for getting the error correction deamon
 running; target name has to be "errcd". This can be done with the command
- ln -s ../ec2/ecd2 errcd
+
+::
+	ln -s ../ec2/ecd2 errcd
