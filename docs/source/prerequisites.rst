@@ -34,4 +34,5 @@ Another symbolic link is needed for getting the error correction deamon
 running; target name has to be "errcd". This can be done with the command
 
 ::
+
 	ln -s ../ec2/ecd2 errcd
