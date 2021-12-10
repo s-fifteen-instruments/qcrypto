@@ -55,7 +55,8 @@ considered, contained in the lower 8 bits of lsb.
 
 .. table::
 
-	Two 32-bit words
+	+-------------------------------+----------+---------------+------+
+	|   First 32-bit word           |    Second 32 bit word           |
 	+-------------------------------+----------+---------------+------+
 	|     Most Significant Word     |     Least Significant Word      |
 	+-------------------------------+----------+---------------+------+
