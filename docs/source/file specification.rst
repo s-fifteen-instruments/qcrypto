@@ -57,8 +57,10 @@ considered, contained in the lower 8 bits of lsb.
 
 	Two 32-bit words
 	+-------------------------------+---------------------------------+
-	|Most Significant Word                            |     Least Significant Word                         |
-	+-------------------------------+---------------------------------+
+	|     Most Significant Word     |     Least Significant Word      |
+	+-------------------------------+----------+---------------+------+
+	|   32 bits                     | 17 bits  | 11 bits       |4 bits|
+	+-------------------------------+----------+---------------+------+
 	
 Timing: (32 msb) MSW + (17 msb) LSW
 Detector: (4 lsb) LSW

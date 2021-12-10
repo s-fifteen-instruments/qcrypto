@@ -40,7 +40,8 @@ where
 .. option::	-V <level>
 
 	Verbosity level control. level is integer, and by default set to 0. The logging verbosity criteria are:
-	level<0 : no logging
+	
+	level<0. : no logging
 	0. : log only epoc number (in hex)
 	1. : log epoch, length without text
 	2. : log epoch, length with text
@@ -54,23 +55,13 @@ where
 .. option::	-p <num>
 
 	select protocol option. defines what transmission protocol is run by selecting what event bits are saved in which stream. option 1 is default.
-	0: service protocol. both type-2 stream and type-3 stream
-	contain the raw detector information.
-	1: BB84 standard protocol. The type-2 stream contains one bit
-	of basis information, the type-3 stream one bit of
-	value information. The detector sequence is hardcoded in
-	the header.
-	2: rich BB84. As before, but two  bits are transmitted. if the
-	msb is 0, the lsb has BB84 meaning, if msb is 1, a multi-
-	or no-coincidence event was recorded (lsb=1), or a pair
-	coincidence was detected (lsb=0).
-	3: six detectors connected to this side, used for the
-	device-independent mode. three transmitted bits, indicating
-	bell basis or key basis
-	4: four detectors connected to this side, device-indep
-	operation. only time is transmitted.
-	5: Like 1, but no basis is transmitted, but basis/result
-	kept in local file
+	
+	0 service protocol. both type-2 stream and type-3 stream contain the raw detector information.
+	1 BB84 standard protocol. The type-2 stream contains one bit of basis information, the type-3 stream one bit of value information. The detector sequence is hardcoded in the header.
+	2 rich BB84. As before, but two  bits are transmitted. if the msb is 0, the lsb has BB84 meaning, if msb is 1, a multi- or no-coincidence event was recorded (lsb=1), or a pair coincidence was detected (lsb=0).
+	3 six detectors connected to this side, used for the device-independent mode. three transmitted bits, indicating bell basis or key basis
+	4 four detectors connected to this side, device-independent operation. only time is transmitted.
+	5 Like 1, but no basis is transmitted, but basis/result kept in local file
 
 .. option::	-Q <num>
 
@@ -155,7 +146,7 @@ An example::
 	
 where 
 
-.. progam:: pfind
+.. program:: pfind
 
 .. option::	-d <dir2>
 
@@ -247,8 +238,7 @@ where
 	0: service mode, emits all bits into stream 3 locally
 	1: standard BB84, emits only result in stream 3
 	(2: rich bb84: emits data and base/error info in stream 3)
-	3: device independent protocol with the 6 detectors connected to
-	  the chopper side (low count rate)
+	3: device independent protocol with the 6 detectors connected to the chopper side (low count rate)
 	4: device independent protocol with the 4 detectors connected to the chopper2 side (high count rate)
 	5: BC protocol; similar to standard BB84, but handles basis differently.
 
@@ -256,6 +246,7 @@ where
 	
 	Policy how to deal with no valid coincidences in present epoch.
 		Implemented:
+		
 	0: do not emit a stream-3 and stream-4 file.
 	1: only emit a stream-4 file, no stream-3 file to notify the other side to discard the corresp. package. This is the default.
 	2: emit both stream-3 and stream-4 files and leave the cleanup to a later stage
@@ -276,6 +267,7 @@ where
 
 	Verbosity level control. level is integer, and by default set to 0.
 		The logging verbosity criteria are:
+	
 	level<0 : no output
 	0 : output bare hex names of processed data sets
 	1 : output handle and number of key events in this epoch
@@ -292,6 +284,7 @@ where
 
 	If 0, no fflush takes place after each processed packet
 		Different levels:
+	
 	0: no flushing
 	1: logfile4 gets flushed
 	2: logfiles for stream3, stream4, standardlog get flushed
@@ -367,6 +360,7 @@ where
 .. option::	-p <protocol>
 
 	Selection of the protocol type. implemented:
+	
 	0: service mode, emits all bits into stream 3 locally
 	  for those entries marked in stream 4
 	1: selects basebits from stream 3in which are marked
@@ -384,6 +378,7 @@ where
 .. option::	-V <level>
 	
 	Verbosity level control. controls format for logfile in the -m option. level is integer, and by default set to 0. The logging verbosity criteria are:
+	
 	level<0 : no output
 	0 : epoch (in plaintext hex). This is default.
 
