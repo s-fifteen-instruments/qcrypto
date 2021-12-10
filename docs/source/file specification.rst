@@ -152,17 +152,17 @@ The following file types seem to be useful:
 	little computational overhead and is hopefully reasonably efficient (less than
 	20% excess size compared to the informational optimum for this stream).
 
-::
+	::
 
-	header format:
+		header format:
 
-		struct header_2 {int tag;
-			unsigned int epoc;
-			unsigned int length;
-			int timeorder;
-			int basebits;
-			int protocol;
-			}
+			struct header_2 {int tag;
+				unsigned int epoc;
+				unsigned int length;
+				int timeorder;
+				int basebits;
+				int protocol;
+				}
 
 	The <tag> entry is either 0x2 for local epoch or 0x102 for an extended epoch
 	definition. The <length> entry is optional and counts the number of events
@@ -182,8 +182,8 @@ The following file types seem to be useful:
 		msb is 0, the lsb has BB84 meaning, if msb is 1, a multi-
 		or no-coincidence event was recorded (lsb=1), or a pair
 		coincidence was detected (lsb=0).
-	3.	extended devindep, 3 bits (1 out of 5)
-	4. extended devindep, no base info is sent.
+	3.		extended devindep, 3 bits (1 out of 5)
+	4. 	extended devindep, no base info is sent.
 	 
 
 
@@ -222,16 +222,16 @@ The following file types seem to be useful:
 	sequence in the transmitted file type 2 already, only the packed bit
 	information has to be stored.
 
-::
+	::
 
-	header format:
+		header format:
 
-		struct header_3 {
-			int tag;
-			unsigned int epoc;
-			unsigned int length;
-			int bitsperentry;
-			}
+			struct header_3 {
+				int tag;
+				unsigned int epoc;
+				unsigned int length;
+				int bitsperentry;
+				}
 
 	The <tag> entry is  either 0x3 for local epoch or 0x103 for an extended epoch
 	definition. The <length> entry is optional and counts the number of events
@@ -264,17 +264,17 @@ The following file types seem to be useful:
 	submission is always more efficient than yes/no encoding for all queried
 	events. The encoding is very similar to file format type 2.
 
-::
+	::
 
-	header format:
-			  
-		struct header_4 {
-			int tag;
-			unsigned int epoc;
-			unsigned int length;
-			int timeorder;
-			int basebits;
-			}
+		header format:
+				  
+			struct header_4 {
+				int tag;
+				unsigned int epoc;
+				unsigned int length;
+				int timeorder;
+				int basebits;
+				}
 
 	The <tag> entry is  either 0x4 for local epoc or 0x104 for an extended epoc
 	definition. The <length> entry is optional and counts the number of events
@@ -301,16 +301,16 @@ The following file types seem to be useful:
 	contains only one bit per entry, so this information needs not to be
 	encoded. This file format is therefore a simplification of the type 3 format.
 
-::
+	::
 
-	header format:
-		
-		struct header_7 {
-			int tag;
-			unsigned int epoc;	
-			unsigned int numberofepochs;
-			int numberofbits;
-			}
+		header format:
+			
+			struct header_7 {
+				int tag;
+				unsigned int epoc;	
+				unsigned int numberofepochs;
+				int numberofbits;
+				}
 
 	The <tag> entry is  either 0x7 for local epoc or 0x107 for an extended epoc
 	definition. The <epoch> entry represents the first data epoch used for
