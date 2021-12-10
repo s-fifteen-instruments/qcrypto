@@ -86,9 +86,9 @@ splicer.c: carries out the final sifting stage on the low count rate side
   
 crgui_ec: TCL/Tk GUI to tie all the codes together.
 
-	This GUI generates the local pipes, files and directories and calls all the 
-	programs in the correct sequence in order to start the QKD engine. It also sends
-   the appropriate messages to negotiate if the party will be the low or high	count side.
+  This GUI generates the local pipes, files and directories and calls all the 
+  programs in the correct sequence in order to start the QKD engine. It also sends
+  the appropriate messages to negotiate if the party will be the low or high	count side.
 
 localparams: A complementary file for the gui
 
@@ -97,8 +97,8 @@ localparams: A complementary file for the gui
 
 diagnosis.c: for analyzing raw key files in service mode
 
- This code is used to generate a correlation matrix from t3 files, and just
- counts various detector combination events in that file.
+  This code is used to generate a correlation matrix from t3 files, and just
+  counts various detector combination events in that file.
 
 diagbb84.c: Just extracts the length of a bb84 raw key file.
 
@@ -120,14 +120,11 @@ Documentation Files
 -------------------
 filespec.txt: Main description of all the binary file formats.
 
-epochdefinition: An incomplete writeup of the timing format used to partition
-all timing key and communication elements.
+epochdefinition: An incomplete writeup of the timing format used to partition all timing key and communication elements.
 
-gui_spec: An incomplete writeup of communication snippets between the GUI
- running on both sides
+gui_spec: An incomplete writeup of communication snippets between the GUI running on both sides
 
-convertdate: A short shell script to convert an epoch index into a
- human-readable date
+convertdate: A short shell script to convert an epoch index into a human-readable date
 
 convertdate_back: A shell script to convert some time/date string into an epoch
 
