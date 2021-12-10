@@ -167,7 +167,7 @@ compressor. Currently supported are:
 	or no-coincidence event was recorded (lsb=1), or a pair
 	coincidence was detected (lsb=0).
 3.	extended devindep, 3 bits (1 out of 5)
-4. 	extended devindep, no base info is sent.
+4. extended devindep, no base info is sent.
 	 
 
 
