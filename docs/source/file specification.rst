@@ -40,7 +40,10 @@ The structure of events as emitted by the timestamp cards is a series of 64
 bit wide structures containing timing and detector event information:
 the data is emitted/saved as a sequence of two unsigned 32 bit wide integers,
 
-   struct rawevent {int msw; int lsw};
+   struct rawevent {
+		int msw; 
+		int lsw;
+		};
    
 where the detection time is contained in the most significant 49 bits of the
 64 bit combination of msw/lsw. The time is recorded in multiples of 125
@@ -49,10 +52,12 @@ recorded. At the moment, this format only works with four possible
 detectors. For future use, a combination of up to eight detectors might be
 considered, contained in the lower 8 bits of lsb.
 
+
 .. table::
 
+	Two 32-bit words
 	+-------------------------------+---------------------------------+
-	|MSW                            |     lsw                         |
+	|Most Significant Word                            |     Least Significant Word                         |
 	+-------------------------------+---------------------------------+
 	
 Timing: (32 msb) MSW + (17 msb) LSW
@@ -104,16 +109,12 @@ packets. format (as saved in binary version on a x86 architecture; ints and
 unsigned ints refer to 32 bit wide integers):
 
 	struct header_1 {
-		
 		int tag;
-		
 		unsigned int epoc;
-		
 		unsigned int length;
-
 		int bitsperentry;
-
-		int basebits;}
+		int basebits;
+		}
 
 <tag> is either 1 for simple raw data or 0x101 for raw data with an extended
 epoch. <length> is optional and counts the number of 64 bit entries to
@@ -141,12 +142,14 @@ little computational overhead and is hopefully reasonably efficient (less than
 20% excess size compared to the informational optimum for this stream).
 
 header format:
-        struct header_2 {int tag;
-			 unsigned int epoc;
-			 unsigned int length;
-			 int timeorder;
-			 int basebits;
-			 int protocol;}
+
+	struct header_2 {int tag;
+		unsigned int epoc;
+		unsigned int length;
+		int timeorder;
+		int basebits;
+		int protocol;
+		}
 
 The <tag> entry is either 0x2 for local epoch or 0x102 for an extended epoch
 definition. The <length> entry is optional and counts the number of events
@@ -207,10 +210,12 @@ information has to be stored.
 
 header format:
 
-        struct header_3 {int tag;
-			 unsigned int epoc;
-			 unsigned int length;
-			 int bitsperentry; }
+	struct header_3 {
+		int tag;
+		unsigned int epoc;
+		unsigned int length;
+		int bitsperentry;
+		}
 
 The <tag> entry is  either 0x3 for local epoch or 0x103 for an extended epoch
 definition. The <length> entry is optional and counts the number of events
@@ -243,11 +248,14 @@ submission is always more efficient than yes/no encoding for all queried
 events. The encoding is very similar to file format type 2.
 
 header format:
-        struct header_4 {int tag;
-			 unsigned int epoc;
-			 unsigned int length;
-			 int timeorder;
-			 int basebits;}
+        
+	struct header_4 {
+		int tag;
+		unsigned int epoc;
+		unsigned int length;
+		int timeorder;
+		int basebits;
+		}
 
 The <tag> entry is  either 0x4 for local epoc or 0x104 for an extended epoc
 definition. The <length> entry is optional and counts the number of events
@@ -274,10 +282,13 @@ contains only one bit per entry, so this information needs not to be
 encoded. This file format is therefore a simplification of the type 3 format.
 
 header format:
-        struct header_7 {int tag;
-    	       		 unsigned int epoc;	
-    			 unsigned int numberofepochs;
-    			 int numberofbits; }
+	
+	struct header_7 {
+		int tag;
+		unsigned int epoc;	
+		unsigned int numberofepochs;
+		int numberofbits;
+		}
 
 The <tag> entry is  either 0x7 for local epoc or 0x107 for an extended epoc
 definition. The <epoch> entry represents the first data epoch used for
