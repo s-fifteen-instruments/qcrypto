@@ -27,11 +27,11 @@ where the options are
 	-V level:		Verbosity level control. level is integer, and by default set
 					to 0. The logging verbosity criteria are:
 					level<0 : no logging
-					 0 : log only epoc number (in hex)
-					 1 : log epoch, length without text
-					 2 : log epoch, length with text
-					 3 : log epoch, length, bitlength with text
-					 4 : log epoch, detector histos without text
+					0. : log only epoc number (in hex)
+					1. : log epoch, length without text
+					2. : log epoch, length with text
+					3. : log epoch, length, bitlength with text
+					4. : log epoch, detector histos without text
 	-U				universal epoch; the epoch is not only derived from the timestamp
 					unit digits, but normalized to unix time origin. This needs the
 					timestamp unit to emit event data with an absolute time tag. For this to work, the received data cannot be older than xxx hours, or an unnoted ambiguity error will occur.

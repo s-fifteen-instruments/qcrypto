@@ -162,8 +162,8 @@ compressor. Currently supported are:
 	msb is 0, the lsb has BB84 meaning, if msb is 1, a multi-
 	or no-coincidence event was recorded (lsb=1), or a pair
 	coincidence was detected (lsb=0).
-4.	extended devindep, 3 bits (1 out of 5)
-5. 	extended devindep, no base info is sent.
+3.	extended devindep, 3 bits (1 out of 5)
+4. 	extended devindep, no base info is sent.
 	 
 
 

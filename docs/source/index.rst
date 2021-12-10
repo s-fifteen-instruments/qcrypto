@@ -34,6 +34,7 @@ Contents
    prerequisites
    requirements
    rationale
+   file specification
    usage
    functions
    gui
