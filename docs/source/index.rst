@@ -11,20 +11,7 @@ Check out the :doc:`usage` section for information on usage, including how to :r
 
 .. For reference on C Domains and Python domains in sphinx, refer to `Sphinx Docs`_
    
-.. _Sphinx Docs: https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#c-domain 
-
-a Python library for cooks and food lovers
-that creates recipes mixing random ingredients.
-It pulls data from the `Open Food Facts database <https://world.openfoodfacts.org/>`_
-and offers a *simple* and *intuitive* API.
-Lumache has its documentation hosted on Read the Docs.
-Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the project.
-
-.. note::
-
-   This project is under active development.
-
+.. _Sphinx Docs: https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#c-domain
 
 .. toctree::
    :caption: Contents:
