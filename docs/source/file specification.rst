@@ -186,7 +186,7 @@ The following file types seem to be useful:
 	1. 	BB84 standard protocol. The type-2 stream contains one bit
 		of basis information, the type-3 stream one bit of
 		value information. The detector sequence is hard coded in
-		the header. (LSB) V,-,H,+ (MSB). Expected coincidence between 
+		the header. Header format: (LSB) V,-,H,+ (MSB).
 	2. 	rich BB84. As before, but two  bits are transmitted. if the
 		msb is 0, the lsb has BB84 meaning, if msb is 1, a multi-
 		or no-coincidence event was recorded (lsb=1), or a pair
