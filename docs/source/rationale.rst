@@ -3,7 +3,7 @@ Rationale
 =========
 
   The code is written such that it can operate as asynchronously as possible
-  with large ammounts of binary data; there should be a minimum of latency
+  with large amounts of binary data, there should be a minimum of latency
   problems in interprocess communication. In order to allow for modularized
   testing and operation, the code leaves large data in individual files, and
   only exchanges low bandwidth textual control information via pipes. The hope

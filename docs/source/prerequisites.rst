@@ -2,7 +2,7 @@
 Prerequisites
 =============
 
-This directory contains the core processing programs for a BB84 type key
+The 'remotecrypto' directory contains the core processing programs for a BB84 type key
 generation scheme. In order to work properly with the hardware, the user
 program for the timestamp card, and a device driver for the appropriate
 interface are needed as well. For the USB-interfaced timestamp card, these
@@ -11,10 +11,11 @@ timestamp2. For the PCI card based version, a nudaq7200 driver and the
 timestamp directory is needed.
 
 The error correction suite can be found in the ec2 directory, also outside
-this core directory.
+the core 'remotecrypto' directory.
 
 For proper operation of the gui running on TCL/TK, the following links 
-from external directories into this one are needed:
+from external directories into 'remotecrypto' directory are needed (symbolic links
+can be thought of as shortcuts to the actual programs):
 
 A symbolic link to the current readevents program should be set under the name
 "readevents". This can be done e.g. with the command
