@@ -1,5 +1,5 @@
 #set targetmachine "192.168.0.114"
-set targetmachine "192.168.1.17"
+set targetmachine "192.168.1.124"
 set localidentity "alice"
 
 # detector delay values for electron
@@ -10,5 +10,5 @@ set detcval(2) 0 ; set detcval(3) 0
 set detcorrmode 1 ; # detector correction is on
 set costreamglogmode 1 ; # costream logging is on
 
-set rmtcoinctime 8 ; # coincidence time window
-set periodecount 10 ; # number of epochs for finding a periode
+set rmtcoinctime 32 ; # coincidence time window
+set periodecount 5 ; # number of epochs for finding a periode
