@@ -55,6 +55,12 @@
    -Q                 Power off after termination
    -c coincvalue:     Set the coincidence time window in internal FPGA delay
                       steps. Range is 0...31, default is ??
+   -S skipnum :       Skip a given number of events at the beginning (to
+                      avoid stale entries in the dma pipeline ?). Default is 0.
+
+   -s 		      Short mode. Only 49 bits of timing info in 1/8 nsec
+   -d t1,t2,t3,t4     Detector skew in units of 1/8 nsec
+   -D t1,t2,t3,t4     Detector skew in units of 1/256 nsec
 		      
    Sigsnals:
    SIGUSR1:   enable data acquisition. This causes the inhibit flag
@@ -101,6 +107,7 @@
 #define FILENAMLEN 200
 #define DEFAULTDEVICENAME "/dev/ioboards/usbtmst0"
 
+#define DEFAULT_SKIPNUM 0   /* forget no entries at beginning */
 #define DEFAULT_POLLING_INTERVAL 10 /* in milliseconds */
 #define DEFAULT_OUTMODE 0
 #define DEFAULT_VERBOSITY 0
@@ -123,7 +130,9 @@
 int outmode = DEFAULT_OUTMODE;
 int verbosity = DEFAULT_VERBOSITY;
 int collectionmode = DEFAULT_COLLECTIONMODE; /* 0: don't start, 1: do start */
+int shortmode=0; /* if true, return 49bits timing info instead of 54bits */
 
+int skipnumber = DEFAULT_SKIPNUM; /* entries at beginning to be skiped */
 uint32_t *rbbuffer; /* pointer to readback buffer */
 
 /* things needed for the USB device  */
@@ -168,6 +177,10 @@ char *errormessage[] = {
     "Error getting system time",
     "Error reading coincidence value",
     "Coincidence value out of range (0...31)",
+    "wrong skew format. needs -d v1,v2,v3,v4", /* 35 */
+    "wrong skew format. needs -D v1,v2,v3,v4", 
+    "Multiple dskew units set, Use only -d OR -D",
+    "negative number of elements to skip.",
 };
 int emsg(int code) {
   fprintf(stderr,"%s\n",errormessage[code]);
@@ -217,6 +230,7 @@ int numberofsamples = DEFAULT_MAXEVENTS; /* sampled events. 0 means unlimited,
 int processedevents = 0; /* only relevant if numberofsamples !=0 */
 uint64_t offsettime[16]; /* time differences for different detector states */
 int legacyswapoption=0;  /* if set, swap to old version of binary output */
+char patt2det[16] = {-1, 0, 1, -1, 2, -1, -1, -1, 3, -1, -1, -1, -1, -1, -1, -1}; /* translation table patt->det */
 
 /* intermediate buffer for processed events */
 uint64_t outbuf[dmasize_in_uint64]; /* holds postprocessed data  */
@@ -258,7 +272,12 @@ int process_data(uint32_t *rbbuffer, int startindex, int endindex,
 	    /* do any consistency checks etc here */
 	    if (rawevent==0) continue; /* we have a void urb return */
 	    /* do any time corrections here */
+	    if (shortmode==1) 
+	        rawevent = (rawevent & 0xffffffffffff100fLL);
+
 	    outbuf[j] = rawevent + offsettime[rawevent&0xf]; j++;
+	  /*  fprintf(stderr, "%016lx %016lx %016lx %lx %d \n", outbuf[j-1],offsettime[rawevent&0xf], rawevent, rawevent&0xf, j-1);*/
+
 	    /* do event number test */
 	    if (numberofsamples) {
 		processedevents++;
@@ -305,7 +324,7 @@ int main(int argc, char *argv[]) {
     int powerstat; /* variable holding general power status */
     int lookuptable[2048];
     FILE *lookupfile;
-    int i;
+    int i, j;
     uint16_t checksum, scratchram[128]; /* scratch ram mirror */
     int sendvalue;
     int v, vold;  /* number of bytes acquired so far, mod 2^31 */
@@ -318,12 +337,17 @@ int main(int argc, char *argv[]) {
     uint64_t absolutetime; /* holds absolute time */
     int poweroffmode=0;
     int coinc_value = DEFAULT_COINC;
-    
+    int dskew[8];          /* for detector skew correction, indexed by detector number */
+    int dskew_mode= -1;      /* 0: in units of 1/256 nsecs. 1: in units of 1/8 nsecs. */
+    /* set skew to zero by default */
+    for (i = 0; i < 8; i++)
+        dskew[i] = 0;
+
 
     /* --------parsing arguments ---------------------------------- */
     
     opterr=0; /* be quiet when there are no options */
-    while ((opt=getopt(argc, argv, "U:v:q:a:rRAXQc:")) != EOF) {
+    while ((opt=getopt(argc, argv, "U:v:q:a:rRAXQc:d:D:sS:")) != EOF) {
 	switch(opt) {
 	case 'q': /* set number of samples to be read in */
 	    if (sscanf(optarg,"%d", &numberofsamples)!=1 ) return -emsg(7);
@@ -362,6 +386,32 @@ int main(int argc, char *argv[]) {
 	    if (1!=sscanf(optarg,"%d",&coinc_value)) return -emsg(33);
 	    if ((coinc_value<0) || (coinc_value>31)) return -emsg(34);
 	    break;
+	case 'd': /* read in detector skews */
+            if (4 != sscanf(optarg, "%d,%d,%d,%d", &dskew[0], &dskew[1],
+                            &dskew[2], &dskew[3]))
+                return -emsg(35);
+	    if (dskew_mode<0)
+		dskew_mode = 1;
+	    else
+		return -emsg(37);
+            break;
+	case 'D': /* read in detector skews */
+            if (4 != sscanf(optarg, "%d,%d,%d,%d", &dskew[0], &dskew[1],
+                            &dskew[2], &dskew[3]))
+                return -emsg(36);
+	    if (dskew_mode<0)
+		dskew_mode = 0;
+	    else
+		return -emsg(37);
+            break;
+        case 's': /* short mode */
+            shortmode=1;
+            break;
+	case 'S': /* skip first few events */
+            sscanf(optarg, "%d", &skipnumber);
+            if (skipnumber < 0)
+                return -emsg(38);
+            break;
 	}
     }
 
@@ -506,8 +556,17 @@ int main(int argc, char *argv[]) {
 	absolutetime = (absolutetime*1000LL)<<18; /* 10 bit info, 8bit to nsec */
     }
     /* set time offsets for different detectors */
-    for (i=0; i<16; i++) offsettime[i]= absolutetime;
-
+    for (i=0; i<16; i++) {
+	j = patt2det[i];
+	/*offset time is in scale of events, 54 bits timing, 10 bits everyting else.
+	 * dskew in units of 1/8 ns. 10 bits left shift to 1/256 ns, 5 more bits shift to 
+	 * go to 1/8 ns.  */ 
+	if(dskew_mode == 1)
+	    offsettime[i] = absolutetime + ((j < 0) ? 0 : ((long long int)dskew[j] << 15 )); 
+	else
+	    offsettime[i] = absolutetime + ((j < 0) ? 0 : ((long long int)dskew[j] << 10 )); 
+	/*fprintf(stderr, "%i \t %lu \n", i, offsettime[i]);*/
+    }
     setitimer(ITIMER_REAL, &polltime, NULL); /* initiate polling timer */
     
     running=1; looperror=0; prev_processed_bytes=0; vold=0;
