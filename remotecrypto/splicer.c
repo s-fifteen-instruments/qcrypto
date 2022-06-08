@@ -131,7 +131,7 @@ ToDo:
 #define DEFAULT_KILLMODE4 0 /* don't delete stream-2 files */
 #define DEFAULT_STARTEPOCH 0
 #define DEFAULT_EPOCHNUMBER 0 /* How many epochs to consider; 0: eternal */
-#define DEFAULT_PROTOCOL 1    /* standard BB84 */
+#define DEFAULT_PROTOCOL 6    /* standard BBM92 */
 
 /* binary buffers */
 #define RAW3i_SIZE 1500000 /* more than enough? */
@@ -211,7 +211,7 @@ typedef struct protocol_details_C
     void (*filltable)(unsigned int *); /* helper function to fill this array.
                      Has to be called in the beginning */
 } pd_C;
-#define PROTOCOL_MAXINDEX 5
+#define PROTOCOL_MAXINDEX 6
 void FILL_TABLE_PROTO0(unsigned int *t)
 {
     int i;
@@ -268,6 +268,12 @@ void FILL_TABLE_PROTO5(unsigned int *t)
     t[3] = 3;
     return;
 }
+void FILL_TABLE_PROTO6(unsigned int *t)
+{
+    t[0] = 0;
+    t[1] = 1;
+    return;
+}
 
 struct protocol_details_C proto_table[] = {
     {/* service protocol. emits all bits in stream 3i and 4i into the outword.
@@ -297,6 +303,10 @@ struct protocol_details_C proto_table[] = {
       stream 4i. reflects the inbits to the outbits. */
      2, 0, 2, 0, 4,
      &FILL_TABLE_PROTO5},
+    {/* BBM92 protocol. expects 1 bit from stream 3i, and nothing from
+      stream 4i. reflects the inbit to the outbit. */
+     1, 0, 1, 0, 2,
+     &FILL_TABLE_PROTO6},
 };
 
 /* ---------------------------------------------------------------------- */

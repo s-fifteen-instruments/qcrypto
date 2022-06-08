@@ -225,7 +225,7 @@
 #define DEFAULT_KILLMODE2 0                       /* don't delete stream-2 files */
 #define DEFAULT_STARTEPOCH 0
 #define DEFAULT_EPOCHNUMBER 0            /* How many epochs to consider; 0: eternal */
-#define DEFAULT_PROTOCOL 1               /* standard BB84 */
+#define DEFAULT_PROTOCOL 6               /* standard BBM92 */
 #define DEFAULT_FILTERCONST_4 0          /* no adaptive bitwidth  */
 #define DEFAULT_BITDEPTH 17              /* should be optimal for 100 kevents/Sec */
 #define DEFAULT_STREAM4BITWIDTH 8        /* for stream 4 */
@@ -335,7 +335,7 @@ typedef struct protocol_details_B
                                      the argument is the decision array. */
 } pd_B;
 
-#define PROTOCOL_MAXINDEX 5
+#define PROTOCOL_MAXINDEX 6
 /* helper functions for filling in the decision table */
 void FILL_DEC_PROTO0(int *t)
 {
@@ -428,6 +428,22 @@ void FILL_DEC_PROTO5(int *t)
     for (i = 0; i < 16; i++)
         t[i] = bbtab[i];
 }
+void FILL_DEC_PROTO6(int *t)
+{
+    /* for BBM92 HH+VV. parameter is 5 bits wide,
+       bits0..3 from stream 1, bit 4 from stream 2.
+       Result is one bit wide for stream-3 data (local raw key),
+       and 0 bits for stream-4 data (acknowledge).
+       The decision bit (bit 1) represents a basis
+       match. sequence stream 1:  (LSB) H,V,+,- (MSB);
+       HV basis: 0, +-basis: 1, result: V-: 0, result: H+: 1
+       base bit from stream 2: 1 is +-, 0 is HV */
+    int bbtab[32] = {0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* base 0 */
+                     0, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0};
+    int i;
+    for (i = 0; i < 32; i++)
+        t[i] = bbtab[i];
+}
 
 struct protocol_details_B proto_table[] = {
     {
@@ -487,6 +503,11 @@ struct protocol_details_B proto_table[] = {
      2, 0, 0, 16, 0,
      16, /* size of combined pattern */
      &FILL_DEC_PROTO5},
+    {/* protocol 6: BBM92 HH+VV. assumed sequence:  (LSB) H,V,+,- (MSB);
+        HV basis: 0, +-basis: 1, result: V-: 0, result: H+: 1 */
+     1, 0, 0, 16, 1,
+     32, /* size of combined pattern */
+     &FILL_DEC_PROTO6},
 
     /* helper functions for filling in the decision table */
 };

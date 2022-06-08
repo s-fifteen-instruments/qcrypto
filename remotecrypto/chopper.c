@@ -172,7 +172,7 @@ PROTECTION OPTION
 #define TYPE2_BUFFERSIZE (1 << 20) /* should be sufficient for 700kcps events */
 #define TYPE3_BUFFERSIZE (1 << 18) /* plenty for 700 kcps */
 #define DEFAULT_FIRSTEPOCHDELAY 10 /* first epoch delay */
-#define DEFAULT_PROTOCOL 1		   /* standard BB84 */
+#define DEFAULT_PROTOCOL 6		   /* standard BBM92 */
 #define DEFAULT_BITDEPTH 17		   /* should be optimal for 100 kevents/Sec */
 #define DEFAULT_FILTERCONST 0	   /* no adaptive bitwidth  */
 #define FILE_PERMISSONS 0644	   /* for all output files */
@@ -200,7 +200,7 @@ typedef struct protocol_details
     int pattern3[16];
 } pd;
 
-#define PROTOCOL_MAXINDEX 5
+#define PROTOCOL_MAXINDEX 6
 
 static struct protocol_details proto_table[] = {
     {
@@ -267,6 +267,16 @@ static struct protocol_details proto_table[] = {
         4,
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, /* pattern 2 : send nothing */
         {0, 0, 2, 0, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0}  /* pattern 3 : result */
+    },
+    {
+        /* protocol 6: BBM92 with |HH> + |VV>. assumed sequence:  (MSB) -,+,V,H (LSB);
+           HV basis: 0, +-basis: 1, result: V-: 0, result: H+: 1 */
+        1,
+        1,
+        16,
+        4,
+        {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}, /* pattern 2 : basis */
+        {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}  /* pattern 3 : result */
     },
 };
 
