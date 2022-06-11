@@ -225,7 +225,7 @@
 #define DEFAULT_KILLMODE2 0                       /* don't delete stream-2 files */
 #define DEFAULT_STARTEPOCH 0
 #define DEFAULT_EPOCHNUMBER 0            /* How many epochs to consider; 0: eternal */
-#define DEFAULT_PROTOCOL 6               /* standard BBM92 */
+#define DEFAULT_PROTOCOL 1               /* standard BB84 */
 #define DEFAULT_FILTERCONST_4 0          /* no adaptive bitwidth  */
 #define DEFAULT_BITDEPTH 17              /* should be optimal for 100 kevents/Sec */
 #define DEFAULT_STREAM4BITWIDTH 8        /* for stream 4 */
@@ -430,19 +430,31 @@ void FILL_DEC_PROTO5(int *t)
 }
 void FILL_DEC_PROTO6(int *t)
 {
-    /* for BBM92 HH+VV. parameter is 5 bits wide,
-       bits0..3 from stream 1, bit 4 from stream 2.
-       Result is one bit wide for stream-3 data (local raw key),
-       and 0 bits for stream-4 data (acknowledge).
-       The decision bit (bit 1) represents a basis
-       match. sequence stream 1:  (LSB) H,V,+,- (MSB);
-       HV basis: 0, +-basis: 1, result: V-: 0, result: H+: 1
-       base bit from stream 2: 1 is +-, 0 is HV */
-    int bbtab[32] = {0, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* base 0 */
-                     0, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0};
-    int i;
-    for (i = 0; i < 32; i++)
-        t[i] = bbtab[i];
+    /* parameter is 8 bits wide , with the stream-2
+       bits in bit7..4 of p3, stream-1 bits in lsbits.
+       result is 8 bits for stream-3 (a copy of p3),
+       and the four bits in stream-1 to stream-4.
+       The decision bit (bit 12) is always 1. */
+    int p3, i, j;
+    //int goodmatch4[16] = {0, 1, 1, 1, 4, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0};
+    int goodmatch4[8] = 
+    	{0x8, 0x4, 0x2, 0x1, /* single detector clicks*/
+	 0xc, 0x9, 0x6, 0x3}; /* Double clicks on cross basis*/
+    for (p3 = 0; p3 < 256; p3++)
+    {                               /* all patterns */
+        t[p3] = p3 |                /* for stream-3 data */
+                ((p3 & 0xf) << 8);  /* for stream-4 data */
+    
+    	for (i = 0; i < 8; i++)
+    	{
+		for(j = 0; j < 8; j++)
+		{	
+        		if( (p3 & goodmatch4[i]) & /* basis from stream-1 */
+		            ((p3<<4) & goodmatch4[j])) /* basis from stream-2 */
+				t[p3] |= 0x1000;      /* decision bit  */
+		}
+    	}
+    }
 }
 
 struct protocol_details_B proto_table[] = {
@@ -503,12 +515,17 @@ struct protocol_details_B proto_table[] = {
      2, 0, 0, 16, 0,
      16, /* size of combined pattern */
      &FILL_DEC_PROTO5},
-    {/* protocol 6: BBM92 HH+VV. assumed sequence:  (LSB) H,V,+,- (MSB);
-        HV basis: 0, +-basis: 1, result: V-: 0, result: H+: 1 */
-     1, 0, 0, 16, 1,
-     32, /* size of combined pattern */
-     &FILL_DEC_PROTO6},
-
+    {
+        /* protocol 6: all bits go everywhere except same basis match 
+	 *  assumed sequence:  (LSB) V,-,H,+ (MSB);*/
+        8,
+        4,
+        0,
+        16,
+        4,   /* 16 entries in the tables p3_1 and p3_2 */
+        256, /* size of combined pattern */
+        &FILL_DEC_PROTO6,
+    },
     /* helper functions for filling in the decision table */
 };
 

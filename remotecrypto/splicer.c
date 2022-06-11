@@ -131,7 +131,7 @@ ToDo:
 #define DEFAULT_KILLMODE4 0 /* don't delete stream-2 files */
 #define DEFAULT_STARTEPOCH 0
 #define DEFAULT_EPOCHNUMBER 0 /* How many epochs to consider; 0: eternal */
-#define DEFAULT_PROTOCOL 6    /* standard BBM92 */
+#define DEFAULT_PROTOCOL 1    /* standard BB84 */
 
 /* binary buffers */
 #define RAW3i_SIZE 1500000 /* more than enough? */
@@ -270,8 +270,9 @@ void FILL_TABLE_PROTO5(unsigned int *t)
 }
 void FILL_TABLE_PROTO6(unsigned int *t)
 {
-    t[0] = 0;
-    t[1] = 1;
+    int i;
+    for (i = 0; i < 256; i++)
+        t[i] = (i >> 4) | ((i & 0xf) << 4); /* nibble swap */
     return;
 }
 
@@ -303,9 +304,11 @@ struct protocol_details_C proto_table[] = {
       stream 4i. reflects the inbits to the outbits. */
      2, 0, 2, 0, 4,
      &FILL_TABLE_PROTO5},
-    {/* BBM92 protocol. expects 1 bit from stream 3i, and nothing from
-      stream 4i. reflects the inbit to the outbit. */
-     1, 0, 1, 0, 2,
+    {/* service protocol. emits all bits in stream 3i and 4i into the outword.
+    the 3i bits end up in bits 4..7, the 4i inbits in bits0..3. This gives
+    the same service files on both sides. It expects 4 bits from stream 3i
+    and 4i. */
+     4, 4, 8, 0, 256,
      &FILL_TABLE_PROTO6},
 };
 

@@ -116,8 +116,9 @@
         ---------modifications to BC protocol-----------------
          5: Like 1, but no basis is transmitted, but basis/result
             kept in local file
-
-
+        ---------modifications to service protocol-----------------
+         6: Service protocol but without local coincidence. Only valid events
+	    
 PROTECTION OPTION
    -m maxnum:    maximum time for a consecutive event to be meaningful. If
                  the time difference to a previous event exceeds this time,
@@ -137,6 +138,7 @@ PROTECTION OPTION
    tried to fix rollover problem in difference test 060306chk
    merge with deviceindep protocol set 29.7.09chk
    started to extend for bc protocol
+   Added protocol 6 for noisy detectors 11.6.22 S.A.
 
  To Do:
    populate lookup tables -ok?
@@ -172,7 +174,7 @@ PROTECTION OPTION
 #define TYPE2_BUFFERSIZE (1 << 20) /* should be sufficient for 700kcps events */
 #define TYPE3_BUFFERSIZE (1 << 18) /* plenty for 700 kcps */
 #define DEFAULT_FIRSTEPOCHDELAY 10 /* first epoch delay */
-#define DEFAULT_PROTOCOL 6		   /* standard BBM92 */
+#define DEFAULT_PROTOCOL 1		   /* standard BB84 */
 #define DEFAULT_BITDEPTH 17		   /* should be optimal for 100 kevents/Sec */
 #define DEFAULT_FILTERCONST 0	   /* no adaptive bitwidth  */
 #define FILE_PERMISSONS 0644	   /* for all output files */
@@ -269,14 +271,18 @@ static struct protocol_details proto_table[] = {
         {0, 0, 2, 0, 1, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0}  /* pattern 3 : result */
     },
     {
-        /* protocol 6: BBM92 with |HH> + |VV>. assumed sequence:  (MSB) -,+,V,H (LSB);
-           HV basis: 0, +-basis: 1, result: V-: 0, result: H+: 1 */
-        1,
-        1,
+        /* protocol 6: Service mode with only valid single clicks and cross basis clicks.
+	 *  assumed sequence:  (LSB) V,-,H,+ (MSB);
+         *  HV basis: 0, +-basis: 1, result: V-: 0, result: H+: 1 */
+        4,
+        4,
         16,
         4,
-        {0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}, /* pattern 2 : basis */
-        {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}  /* pattern 3 : result */
+        {0, 1, 2, 3, 4, 0, 6, 0, 8, 9, 0, 0, 0xc, 0, 0, 0}, /* pattern 2 : basis 
+							     * Keep only single and cross basis match */
+        {0, 1, 2, 3, 4, 0, 6, 0, 8, 9, 0, 0, 0xc, 0, 0, 0}  /* pattern 3 : result */
+        //{0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0}, /* pattern 2 : basis */
+        //{0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}  /* pattern 3 : result */
     },
 };
 
