@@ -350,6 +350,7 @@ void FILL_DEC_PROTO0(int *t)
         t[p3] = p3 |                /* for stream-3 data */
                 ((p3 & 0xf) << 8) | /* for stream-4 data */
                 0x1000;             /* decision bit */
+	/* fprintf(stderr,"%08x \n",t[p3]); */
     }
 }
 void FILL_DEC_PROTO1(int *t)
@@ -445,15 +446,31 @@ void FILL_DEC_PROTO6(int *t)
         t[p3] = p3 |                /* for stream-3 data */
                 ((p3 & 0xf) << 8);  /* for stream-4 data */
     
-    	for (i = 0; i < 8; i++)
-    	{
-		for(j = 0; j < 8; j++)
-		{	
-        		if( (p3 & goodmatch4[i]) & /* basis from stream-1 */
-		            ((p3<<4) & goodmatch4[j])) /* basis from stream-2 */
-				t[p3] |= 0x1000;      /* decision bit  */
-		}
-    	}
+	/* For single clicks on both sides */
+    	for (i = 0; i < 4; i++){ 
+          for(j = 0; j < 4; j++){	
+            if( ((p3&0xf) ==  goodmatch4[i]) && /* basis from stream-1 */
+		(((p3>>4)&0xf) == goodmatch4[j])) /* basis from stream-2 */
+            t[p3] |= 0x1000;      /* decision bit  */
+	  }
+	}
+//	/* For single clicks on stream 1 and double on stream 2 */
+//    	for (i = 0; i < 4; i++){ 
+//          for(j = 4; j < 8; j++){	
+//            if( (p3 & goodmatch4[i]) || /* basis from stream-1 */
+//		((p3>>4) & goodmatch4[j])) /* basis from stream-2 */
+//            t[p3] |= 0x1000;      /* decision bit  */
+//	  }
+//	}
+//	/* For single clicks on stream 2 and double on stream 1 */
+//    	for (i = 4; i < 8; i++){ 
+//          for(j = 0; j < 4; j++){	
+//            if( (p3 & goodmatch4[i]) || /* basis from stream-1 */
+//		((p3>>4) & goodmatch4[j])) /* basis from stream-2 */
+//            t[p3] |= 0x1000;      /* decision bit  */
+//	  }
+//	}
+//	fprintf(stderr,"%08x \n",t[p3]);
     }
 }
 
