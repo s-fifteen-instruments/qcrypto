@@ -1,14 +1,16 @@
 #set targetmachine "192.168.0.114"
-set targetmachine "192.168.1.124"
-set localidentity "alice"
+#set targetmachine "192.168.1.124"
+set targetmachine "a.qkd.internal"
+set portnum 4855 ;
+set localidentity "QKD-B"
 
-# detector delay values for electron
-set detcval(0) 0 ; set detcval(1) 0
-set detcval(2) 0 ; set detcval(3) 0 
-
+# detector delay values for QKD-B 1/256ns
+set detcval(0) 64 ; set detcval(1) -78
+set detcval(2) -15 ; set detcval(3) 0 
+ 
 # various mode settings
 set detcorrmode 1 ; # detector correction is on
 set costreamglogmode 1 ; # costream logging is on
 
-set rmtcoinctime 32 ; # coincidence time window
-set periodecount 5 ; # number of epochs for finding a periode
+set rmtcoinctime 10 ; # coincidence time window
+set periodecount 10 ; # number of epochs for finding a periode
