@@ -1,4 +1,4 @@
-all: readevents5 readevents6
+all: readevents5 
 
 readevents5: readevents5.c timestampcontrol.h configtmst.h
 	gcc -Wall -O3 -o readevents5 readevents5.c
