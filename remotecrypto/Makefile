@@ -42,3 +42,4 @@ clean:
 	rm -f transferd
 	rm -f getrate
 	rm -f getrate2
+	rm -f ffind
