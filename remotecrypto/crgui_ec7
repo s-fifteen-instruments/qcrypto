@@ -512,8 +512,8 @@ proc startinputpart1 {} {
     if {$negotiatemode != 1} return
 
     # select protocol for chopper
-    #set proto [lindex {-1 0 1} $protocol] ; # select chopper proto
-    set proto [lindex {-1 6 1} $protocol]
+    set proto [lindex {-1 0 1} $protocol] ; # select chopper proto
+    #set proto [lindex {-1 6 1} $protocol]
     if {$proto < 0} return ; # protocol not negotiated yet
     
     set t2logpipe [open $dataroot/t2logpipe r+]
@@ -731,8 +731,8 @@ proc periodefind2 {} {
 
 
     # ready to start the key generation
-    #set proto [lindex {-1 0 1} $protocol]
-    set proto [lindex {-1 6 1} $protocol]
+    set proto [lindex {-1 0 1} $protocol]
+    #set proto [lindex {-1 6 1} $protocol]
     if { $proto < 0 } return ; #not correct protocol
     # set up costream log handle
     set costreamhandle [open $dataroot/genlog r+]
@@ -872,8 +872,8 @@ proc startdigestpart1 {} {
     global killmode
     if {$negotiatemode != 1} return
     # start splicer
-    #set proto [lindex {-1 0 1} $protocol]
-    set proto [lindex {-1 6 1} $protocol]
+    set proto [lindex {-1 0 1} $protocol]
+    #set proto [lindex {-1 6 1} $protocol]
     if {$proto <0 } return ; # no protocol defined
 
     fileevent $receivenotehandle readable receivelogactivity2
@@ -985,7 +985,7 @@ proc startsinglecount {} {
 			-i $dataroot/rawevents \
 			-n 0 -s  > $dataroot/cntlogpipe & ]
     set readerpid [exec $programroot/readevents \
-		       -a 1 -A -X -q 200000 -s -Q \
+		       -a 1 -A -X -s -Q \
 		       > $dataroot/rawevents & ]
 }
 
@@ -1420,7 +1420,7 @@ for {set i 0} {$i < 4} {incr i} {
     entry .m4.2.f42.e$i -textvariable detcval($i) -width 3
     bind .m4.2.f42.e$i <Return> updetc
 }
-label .m4.2.f42.l2 -text "x 1/256256nsec"
+label .m4.2.f42.l2 -text "x 1/256nsec"
 grid .m4.2.f42.t0 .m4.2.f42.e0 .m4.2.f42.t1 .m4.2.f42.e1 \
 .m4.2.f42.t2 .m4.2.f42.e2 .m4.2.f42.t3 .m4.2.f42.e3 .m4.2.f42.l2 -sticky w
 updetc
