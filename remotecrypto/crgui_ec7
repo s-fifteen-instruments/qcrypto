@@ -685,7 +685,7 @@ proc periodefind2 {} {
 	return
     }
     set beginepoch 0x$firstepoch ; # epoch to start pfind with
-    set useperiods [expr $periodecount - 2 ] ; # epochs to use for pfind
+    set useperiods [expr $periodecount ] ; # epochs to use for pfind
     set ldiff [expr 0x$firstreceivedepoch - 0x$firstepoch  ]
     
     set userperiods [expr $useperiods - $ldiff]
@@ -695,7 +695,7 @@ proc periodefind2 {} {
 
     }
 
-    incr beginepoch 2 ; # Skip two epoch.
+    #incr beginepoch 2 ; # Skip two epoch.
     set debugval "h2 f: $firstepoch : $beginepoch"
     # ready to find periode
     set locstat "finding difference"
