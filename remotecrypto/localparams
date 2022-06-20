@@ -1,19 +1,18 @@
-set targetmachine "b.qkd.internal"
-set portnum 4855 ;
-set localidentity "QKD-A"
+set targetmachine "a.qkd.internal"
+set portnum 4853 ;
+set localidentity "QKD-B"
 
 # detector delay values for QKD-B 1/256ns
-#set detcval(0) 64 ; set detcval(1) -78
-#set detcval(2) -15 ; set detcval(3) 0 
+set detcval(0) 64 ; set detcval(1) -78
+set detcval(2) -15 ; set detcval(3) 0 
  
 
-# detector delay values for QKD-A in 1/256 nsec
-set detcval(0) -28 ; set detcval(1) 6 ; # With delays
-set detcval(2) 30 ; set detcval(3) 0 ; # With delays
+# detector delay values for qkdA in 1/8 nsec
+#set detcval(0) 26 ; set detcval(1) 41 ; # With delays
+#set detcval(2) 0 ; set detcval(3) 74 ; # With delays
 # various mode settings
 set detcorrmode 1 ; # detector correction is on
 set costreamglogmode 1 ; # costream logging is on
 
-set rmtcoinctime 6 ; # coincidence time window
-set periodecount 10 ; # number of epochs for finding a periode
-
+set rmtcoinctime 10 ; # coincidence time window
+set periodecount 8 ; # number of epochs for finding a periode
