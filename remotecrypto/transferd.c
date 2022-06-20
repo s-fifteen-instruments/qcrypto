@@ -466,7 +466,7 @@ keepawake_handle= open(fname[1],DUMMYMODE); */
 	recadr.sin_family = AF_INET;
 	if (fname[5][0])
 	{ /* port defined */
-		if (inet_aton(fname[5], &recadr.sin_addr))
+                if (inet_aton(fname[5], &recadr.sin_addr) == 0 ) /*inet_aton returns 0 if address is not valid*/
 			return -emsg(25);
 	}
 	else
