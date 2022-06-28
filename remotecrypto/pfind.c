@@ -63,6 +63,8 @@
  RESOLUTION:
    -r resolution   	resolution of timing info in nanoseconds. Will be rounded
                    	to closest power of 1 nsec. Default is 2 nsec.
+   -R resolution   	resolution of coarse timing info in nanoseconds. Will be rounded
+                   	to closest power of 1 nsec. Default is 2048 nsec.
    -q bufferwidth 	order of FFT buffer size. Defines the wraparound size
                   	of the coarse / fine periode finding part. defaults
 		   			to 17 (128k entries), must lie within 12 and 23.
@@ -125,7 +127,7 @@
 #define DEFAULT_BBW 17		/* default buffer_bitwidth */
 #define BBW_MIN 12			/* limits for bufer width */
 #define BBW_MAX 27			/* limits for buffer width */
-#define CRES_ORDER (11 + 3) /* coarse resolution is 2048 nsec */
+#define CRES_ORDER (11) /* coarse resolution is 2048 nsec */
 #define COARSE_RES (1 << CRES_ORDER)
 
 /* structures for input buffer headers */
@@ -379,21 +381,23 @@ unsigned int overlay_correction[16] = {0, PL1, 0, MI1, MI1, 0, PL1, 0,
 
 int main(int argc, char *argv[])
 {
-	FILE *loghandle;							  /* for log files */
-	unsigned int startepoch = DEFAULT_STARTEPOCH; /* epoch to start with */
-	int numthread = DEFAULT_THREADNUM;			  /* number of threads */
-	int epochnumber = DEFAULT_EPOCHNUMBER;		  /* # of epochs to read  */
-	int resolution = DEFAULT_RESOLUTION;		  /* in units of nsec */
-	int resorder;								  /* shift mask for resolution */
-	int i, j, opt, retval;						  /* various working variables */
-	unsigned int ju, ku;						  /* whereever it is needed */
-	char *buffer1, *buffer2;					  /* buffers for packed files */
-	struct header_1 head1;						  /* for input stream 1 */
-	struct header_2 head2;						  /* for input stream 2 */
+	FILE *loghandle;				 /* for log files */
+	unsigned int startepoch = DEFAULT_STARTEPOCH;	 /* epoch to start with */
+	int numthread = DEFAULT_THREADNUM;		 /* number of threads */
+	int epochnumber = DEFAULT_EPOCHNUMBER;		 /* # of epochs to read  */
+	int resolution = DEFAULT_RESOLUTION;		 /* in units of nsec */
+	int resorder;					 /* shift mask for resolution */
+	int resolution_coarse = COARSE_RES;		 /* in units of 1 nsec */
+	int resorder_coarse = CRES_ORDER;		 /* shift mask for resolution */
+	int i, j, opt, retval;				 /* various working variables */
+	unsigned int ju, ku;				 /* whereever it is needed */
+	char *buffer1, *buffer2;			 /* buffers for packed files */
+	struct header_1 head1;				 /* for input stream 1 */
+	struct header_2 head2;				 /* for input stream 2 */
 	unsigned long long mask, intime;
 	int fres, sres;					 /* shift information for coarse / fine periode finder */
 	int ecnt1, ecnt2;				 /* counting events in source files */
-	unsigned long long epoch_offset; /* for epoch correction */
+	unsigned long long epoch_offset; 		 /* for epoch correction */
 	int resbits, realsize2, bitstoread2, pattern;
 	unsigned int tdiff, tdiff_bitmask, readword, patternmask;
 	int emergency_break;										 /* contains maximum index for strean-2 decompress */
@@ -412,7 +416,7 @@ int main(int argc, char *argv[])
 
 	/* parsing options */
 	opterr = 0; /* be quiet when there are no options */
-	while ((opt = getopt(argc, argv, "i:d:I:D:kKe:n:r:l:V:q:")) != EOF)
+	while ((opt = getopt(argc, argv, "i:d:I:D:kKe:n:r:l:V:q:R:")) != EOF)
 	{
 		switch (opt)
 		{
@@ -479,6 +483,15 @@ int main(int argc, char *argv[])
 			if (buf_bitwidth < BBW_MIN || buf_bitwidth > BBW_MAX)
 				return -emsg(30); /* out of range */
 			break;
+		case 'R': /* coarse resolution */
+			if (1 != sscanf(optarg, "%d", &resolution_coarse))
+				return -emsg(8);
+			i = resolution_coarse;
+			for (resorder_coarse = 0; i > 1; i /= 2)
+				resorder_coarse++;
+			if (resolution_coarse != (1 << resorder_coarse))
+				return -emsg(9);
+			break;
 		}
 	}
 
@@ -490,6 +503,13 @@ int main(int argc, char *argv[])
 		return -emsg(9);
 	resorder += 3;	 /* from now on, it refers to 1/8 nsec */
 	resolution *= 8; /* refers also to 1/8 nsec */
+	i = resolution_coarse;
+	for (resorder_coarse = 0; i > 1; i /= 2)
+		resorder_coarse++;
+	if (resolution_coarse != (1 << resorder_coarse))
+		return -emsg(9);
+	resorder_coarse += 3;	 /* from now on, it refers to 1/8 nsec */
+	resolution_coarse *= 8; /* refers also to 1/8 nsec */
 
 	/* consolidate buffer size */
 	zhs = 1 << buf_bitwidth;
@@ -511,7 +531,7 @@ int main(int argc, char *argv[])
 	/* prepare event isolation constants */
 	mask = zhs - 1;
 	fres = resorder;   /* shifting for fine order */
-	sres = CRES_ORDER; /* shifting for coarse timng */
+	sres = resorder_coarse; /* shifting for coarse timng */
 
 	/* concatenate events into buffer; first, the type-1 stream events */
 	ecnt1 = 0; /* event counter 1 */
@@ -767,7 +787,7 @@ int main(int argc, char *argv[])
 	/* consolidate time difference from fast/slow values */
 	if (pos_s & (zhs >> 1))
 		pos_s |= (-zhs);	 /* do sign extend */
-	t0 = pos_s * COARSE_RES; /* in 1/8 nsec */
+	t0 = pos_s * resolution_coarse; /* in 1/8 nsec */
 	timediff = (long long int)((pos_f - (t0 / resolution)) & (zhs - 1));
 	if (timediff & (zhs >> 1))
 		timediff |= (-zhs); /* do sign extend */
