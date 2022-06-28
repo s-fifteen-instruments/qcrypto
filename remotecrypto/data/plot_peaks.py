@@ -14,6 +14,9 @@ file2 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/b"
 delay = -4185824
 
 raw_dir = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/"
+dirPath = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/plots/"
+if not os.path.isdir(dirPath):
+    os.mkdir(dirPath)
 
 
 @contextlib.contextmanager
@@ -118,5 +121,5 @@ def test_single():
     a.plot_hist()
 
 if __name__ == '__main__':
-    #process_file()
-    test_single()
+    process_folder()
+    #test_single()
