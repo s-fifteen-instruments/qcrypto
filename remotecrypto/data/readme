@@ -1,0 +1,9 @@
+Scripts for automated data taking using timestamp7 on two machines.
+Put script in crontab to run every X minutes or x hours.
+Outputs rawevents with timetag and identity.
+timetag appended to time_list.
+Process file goes through time_list and creates epoch files.
+
+from epoch file list, pfind_script runs pfind with specified resolution and buffer width.
+Optimise until pfind works in all cases.
+
