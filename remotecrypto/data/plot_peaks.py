@@ -67,6 +67,13 @@ class RawTs(object):
                                  )
         self.x = np.arange(bins)*bin_width
 
+    def plot_hist_show(self):
+        plt.xlabel('delay (ns)')
+        plt.ylabel('counts')
+        plt.plot(self.x,self.histo)
+        plt.legend(['Delay : ' + str(self.ch_stop_delay)])
+        plt.show()
+
     def plot_hist(self):
         plt.xlabel('delay (ns)')
         plt.ylabel('counts')
@@ -116,10 +123,16 @@ def process_folder():
         a.plot_hist()
 
 def test_single():
-    a = RawTs()
+    #file1 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/raw_a_202206282230"
+    #file2 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/raw_b_202206282230"
+    #delay = 1378528
+    file1 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/a"
+    file2 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/b"
+    delay = 1180224
+    a = RawTs(file1 = file1, file2 = file2, delay = int(delay))
     a.fname = 'plots/test'
-    a.plot_hist()
+    a.plot_hist_show()
 
 if __name__ == '__main__':
-    process_folder()
-    #test_single()
+    #process_folder()
+    test_single()
