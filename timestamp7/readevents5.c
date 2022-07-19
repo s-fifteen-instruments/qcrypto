@@ -61,6 +61,8 @@
    -s 		      Short mode. Only 49 bits of timing info in 1/8 nsec
    -d t1,t2,t3,t4     Detector skew in units of 1/8 nsec
    -D t1,t2,t3,t4     Detector skew in units of 1/256 nsec
+
+   -Z                 Force power cycle of SET_POWER_STATE
 		      
    Sigsnals:
    SIGUSR1:   enable data acquisition. This causes the inhibit flag
@@ -115,6 +117,10 @@
 #define DEFAULT_COLLECTIONMODE 1 /* for -r/-R option */
 #define DEFAULT_COINC 0  /* for -c option */
 #define MAX_COINC_VALUE 31
+#define POWER_ON 1
+#define POWER_OFF 0
+#define POWER_SLEEP_SECONDS 1.5 /* POWER OFF time to reset HW before
+				   switching on again */
 
 /* content of the readback byte from GET_POWER_STATE*/
 #define FPGA_booted 0x80
@@ -336,6 +342,7 @@ int main(int argc, char *argv[]) {
     struct timeval systemtimestamp; /*  structure to hold abs time request */
     uint64_t absolutetime; /* holds absolute time */
     int poweroffmode=0;
+    int powercycle=0;
     int coinc_value = DEFAULT_COINC;
     int dskew[8];          /* for detector skew correction, indexed by detector number */
     int dskew_mode= -1;      /* 0: in units of 1/256 nsecs. 1: in units of 1/8 nsecs. */
@@ -347,7 +354,7 @@ int main(int argc, char *argv[]) {
     /* --------parsing arguments ---------------------------------- */
     
     opterr=0; /* be quiet when there are no options */
-    while ((opt=getopt(argc, argv, "U:v:q:a:rRAXQc:d:D:sS:")) != EOF) {
+    while ((opt=getopt(argc, argv, "U:v:q:a:rRAXQc:d:D:sS:Z")) != EOF) {
 	switch(opt) {
 	case 'q': /* set number of samples to be read in */
 	    if (sscanf(optarg,"%d", &numberofsamples)!=1 ) return -emsg(7);
@@ -412,6 +419,9 @@ int main(int argc, char *argv[]) {
             if (skipnumber < 0)
                 return -emsg(38);
             break;
+	case 'Z': /* Force power cycle */
+	    powercycle=1;
+	    break;
 	}
     }
 
@@ -435,7 +445,18 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "Stopping previous acquisition (FX2 part)....");
     if (ioctl(handle, RESET_TRANSFER)) return -emsg(6);
     if (verbosity>2) fprintf(stderr, "OK\n");
+    
+    /* Hard reset of power state */
+    if (powercycle) {
+   	if (ioctl(handle, SET_POWER_STATE, POWER_OFF)) return -emsg(6);
+    	if (verbosity>2)
+	    fprintf(stderr, "Set power to 0\n");
+	sleep(POWER_SLEEP_SECONDS);
+	if (ioctl(handle, SET_POWER_STATE, POWER_ON)) return -emsg(6);
+    	if (verbosity>2)
+	    fprintf(stderr, "Set power to 1\n");
 
+    }
     /* turn device on, boot FPGA, initialize clock and ADC */
     if (ioctl(handle, CONFIG_TMSTDEVICE, 2)) return -emsg(5);
 

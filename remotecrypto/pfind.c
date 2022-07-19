@@ -836,7 +836,7 @@ int main(int argc, char *argv[])
 				timediff, maxval_f / sigma_f, maxval_s / sigma_s);
 		break;
 	case 3:
-		fprintf(loghandle, "fine resolution: %.2f nsec\n", resolution / 8.0);
+		fprintf(loghandle, "fine resolution: %.2f nsec, coarse resolution: %.2f nsec\n", resolution / 8.0, resolution_coarse / 8.0);
 		fprintf(loghandle, "difference: %lld units of 1/8 nsec or %.9f sec\n",
 				timediff, timediff * 1.25E-10);
 		fprintf(loghandle, "peak height: fine: %.2f sigma, coarse: %.2f sigma\n",

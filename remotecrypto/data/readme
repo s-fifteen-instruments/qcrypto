@@ -1,0 +1,31 @@
+Scripts for automated data taking using timestamp7 on two machines.
+Put script in crontab to run every X minutes or x hours.
+Outputs rawevents with timetag and identity.
+timetag appended to time_list.
+Process file goes through time_list and creates epoch files.
+
+from epoch file list, pfind_script runs pfind with specified 
+1) number of epoch
+2) buffer size.
+3) fine resolution
+4) coarse resolution
+5) skip epoch
+Optimise until pfind works in all cases.
+To check qualitatively that pfind works, see that it converge to same tdiff increasing number of epoch and buffer size.
+To check quantitatively that it works, do g2 with the and offset with time difference found and see that the peak is there with the correct amplitude 
+total good coicidences in rawevents = area under the g2 peak. # 20220628 run has ~1000 coincidence per second
+This is implemented in plot_peaks.py
+
+filelist
+1) data_taking_script.sh
+2) data_process_script.sh
+3) pfind_optim.sh
+4) plot_peaks.py
+5) readme
+6) costream_script.sh
+
+7) data_process_single.sh
+8) pfind_single.sh
+9) costream_test.sh
+10) part_timest.sh
+ 
