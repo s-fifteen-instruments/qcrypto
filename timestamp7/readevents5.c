@@ -5,7 +5,7 @@
    Assumes a pre-loaded phase correction table in the device, but can generate
    simple phase tables as well, or load a LUT from a file.
   
-   Copyright (C) 2018 Christian Kurtsiefer, National University of Singapore
+   Copyright (C) 2018-22 Christian Kurtsiefer, National University of Singapore
                       <christian.kurtsiefer@gmail.com> 
 
  
@@ -42,6 +42,7 @@
    -v verbosity :     selects how much noise is generated on nonstandard
                       events. All comments go to stderr. A value of 0
 		      means no comments. Default is 0.
+   -j :               Enables the calibration output (currently NIM supported).
    -A :		      Output in absolute time. The timestamp mark is added to
                       the unix time evaluated upon starting of the timestamp
 		      card; the resulting time is truncated to the least
@@ -341,6 +342,7 @@ int main(int argc, char *argv[]) {
     int absolutetimemode=0;
     struct timeval systemtimestamp; /*  structure to hold abs time request */
     uint64_t absolutetime; /* holds absolute time */
+    int calibrationenable=0;
     int poweroffmode=0;
     int powercycle=0;
     int coinc_value = DEFAULT_COINC;
@@ -354,7 +356,7 @@ int main(int argc, char *argv[]) {
     /* --------parsing arguments ---------------------------------- */
     
     opterr=0; /* be quiet when there are no options */
-    while ((opt=getopt(argc, argv, "U:v:q:a:rRAXQc:d:D:sS:Z")) != EOF) {
+    while ((opt=getopt(argc, argv, "U:v:q:a:rRAXQc:d:D:sjS:Z")) != EOF) {
 	switch(opt) {
 	case 'q': /* set number of samples to be read in */
 	    if (sscanf(optarg,"%d", &numberofsamples)!=1 ) return -emsg(7);
@@ -380,6 +382,9 @@ int main(int argc, char *argv[]) {
 	case 'R': /* wait acquisition until signal comes */
 	    collectionmode=0;
 	    break;
+        case 'j': /* Calibration enable mode */
+            calibrationenable=1;
+            break;
 	case 'A': /* set absolute time mode */
 	    absolutetimemode=1;
 	    break;
@@ -533,7 +538,8 @@ int main(int argc, char *argv[]) {
     if (verbosity>2) fprintf(stderr, "LUT checked in eeprom\n");
 	
     /* send configuration */
-    configword = (coinc_value<<10) | LongFormat | NoDummyInject | NIMOUTenable ;
+    configword = (coinc_value<<10) | LongFormat | NoDummyInject | 
+	    calibrationenable?NIMOUTenable:0 ;
     if (ioctl(handle, WRITE_CPLD, configword | ParameterSelect | CounterReset))
       return -emsg(21);
     /* send ADC and NIM parameters */
