@@ -378,7 +378,7 @@ int main(int argc, char *argv[])
 	}
 	cmdinhandle = fopen("/tmp/cryptostuff/cmdins", "w+");
 
-	debuglog = fopen("/tmp/cryptostuff/debuglog", "w+");
+	debuglog = fopen("/tmp/cryptostuff/debuglog", "a+");
 
 	/* get all sockets */
 	sendskt = socket(AF_INET, SOCK_STREAM, 0); /* outgoing packets */
