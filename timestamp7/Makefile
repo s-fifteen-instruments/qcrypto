@@ -1,4 +1,7 @@
-all: readevents5 
+all: readevents7 
+
+readevents7: readevents7.c timestampcontrol.h configtmst.h
+	gcc -Wall -O3 -o readevents7 readevents7.c
 
 readevents5: readevents5.c timestampcontrol.h configtmst.h
 	gcc -Wall -O3 -o readevents5 readevents5.c
@@ -13,5 +16,6 @@ clean:
 	rm -f *~
 	rm -f readevents5
 	rm -f readevents6
+	rm -f readevents7
 	rm -f showdiff
 
