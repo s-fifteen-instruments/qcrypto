@@ -494,7 +494,7 @@ proc measurelocalcountrate {} { # measure local count rate with real hardware
     set localcountrate "--"
     set a [open $dataroot/rawevents r+]
     # read $a
-    set y [exec $programroot/readevents -a 1 -X -s -Q \
+    set y [exec $programroot/readevents -a 1 -X -s \
 	       | $programroot/getrate \
 	       > $dataroot/rawevents & ]
     set localcountrate [gets $a]
@@ -535,7 +535,7 @@ proc startinputpart1 {} {
 
     # start readevents but keep passive
     set readerpid [exec $programroot/readevents \
-		       -a 1  -A -X -s -Q \
+		       -a 1  -A -X -s \
 		       $detcorrection \
 		       > $dataroot/rawevents \
 		       2>>$dataroot/readeventserror & ]
@@ -605,7 +605,7 @@ proc startinputpart2 {} {
 			-m $maxeventdiff 2>> /dev/null &]
 
     set readerpid [exec $programroot/readevents \
-		       -a 1  -A -X -s -Q \
+		       -a 1  -A -X -s \
 		       $detcorrection \
 		       > $dataroot/rawevents \
 		       2>>$dataroot/readeventserror &]
@@ -707,6 +707,7 @@ proc periodefind2 {} {
 		       -n $useperiods -V 1 \
 		       -q $akfbufferorder \
 		       -r 2 \
+		       -R 128 \
 		       2>>$dataroot/pfinderror} \
 		a]
 
@@ -1516,7 +1517,7 @@ proc upgs { } { # update gnuplot control file
         4 { # TIMING HISTOGRAMS
             set costreamhistoopt "-H $dataroot/histos/tfli"
             exec echo "set terminal tkcanvas ; set output \"$gnucanvas\"" >$gnucontrol
-            exec echo "set xrange \[-10:10\] " >> $gnucontrol
+            exec echo "set xrange \[-3:3\] " >> $gnucontrol
             set outstring "plot \'$diagdatafile2\' "
             set gg {2 3 4 5 6 10 14} ; # column numbers in histogram
             set commt {"1-1" "1-2" "1-3" "1-4" "2-1" "3-1" "4-1"}

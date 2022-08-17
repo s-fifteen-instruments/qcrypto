@@ -27,6 +27,9 @@ diagbb84: diagbb84.c
 transferd: transferd.c
 	gcc -Wall -O3 -o transferd transferd.c
 
+getrate2: getrate2.c
+	gcc -Wall -O3 -o  getrate2 getrate2.c
+
 getrate: getrate.c
 	gcc -Wall -O3 -o  getrate getrate.c
 
