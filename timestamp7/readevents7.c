@@ -79,6 +79,8 @@
 		      negative for values below 1365, and positive for values
 		      values above.
    -f                 Fast option. Uses 32bit intermediate format.
+   -Z                 Force power cycle of SET_POWER_STATE
+
 		      
    Signals:
    SIGUSR1:   enable data acquisition. This causes the inhibit flag
@@ -136,6 +138,10 @@
 #define DEFAULT_COINC 0  /* for -c option */
 #define MAX_COINC_VALUE 31
 #define DEFAULT_INPUTTRHESHOLD 768 /* for -t option, corresponds to -448mV */
+#define POWER_ON 1
+#define POWER_OFF 0
+#define POWER_SLEEP_SECONDS 1.5 /* POWER OFF time to reset HW before
+                                  switching on again */
 
 
 /* content of the readback byte from GET_POWER_STATE*/
@@ -298,7 +304,7 @@ int process_data(uint32_t *rbbuffer, int startindex, int endindex,
 	case 2: /* same as mode 1, but hex version */
 	    /* todo : honor maxevents */
 	    j=0;
-	    for (i=startindex; i+1<endindex; i+=1) {
+	    for (i=startindex; i<endindex; i+=1) {//CHECK:is i+1 correct here?
 		newevent = rbbuffer[i];
 		/* do any consistency checks etc here */
 		if (newevent==0) continue; /* we have a void urb return */
@@ -449,6 +455,8 @@ int main(int argc, char *argv[]) {
     int selftestlevela=0; int selftestlevelb=0;
     int input_threshold[4]={0,0,0,0}; /* input threshold in DAC units */
     int thresholdset=0; /* indicates if there is a threshold setting */
+    int powercycle=0;
+
 
     /* set skew to zero by default */
     for (i = 0; i < 8; i++)
@@ -458,7 +466,7 @@ int main(int argc, char *argv[]) {
     /* --------parsing arguments ---------------------------------- */
     
     opterr=0; /* be quiet when there are no options */
-    while ((opt=getopt(argc, argv, "U:v:q:a:rRAXQc:d:D:sjS:b:t:f")) != EOF) {
+    while ((opt=getopt(argc, argv, "U:v:q:a:rRAXQc:d:D:sjS:b:t:fL:Z")) != EOF) {
 	switch(opt) {
 	case 'q': /* set number of samples to be read in */
 	    if (sscanf(optarg,"%d", &numberofsamples)!=1 ) return -emsg(7);
@@ -565,6 +573,10 @@ int main(int argc, char *argv[]) {
 	case 'f': /* set 32bit option */
 	    fastmode++; /* can increase */
 	    break;
+        case 'Z': /* Force power cycle */
+            powercycle=1;
+	    break;
+
 	}
     }
 	
@@ -583,6 +595,17 @@ int main(int argc, char *argv[]) {
     }
 
     /* ------------- initialize hardware  ---------------------*/
+    /* Hard reset of power state */
+    if (powercycle) {
+      if (ioctl(handle, SET_POWER_STATE, POWER_OFF)) return -emsg(6);
+      if (verbosity>2)
+          fprintf(stderr, "Set power to 0\n");
+      sleep(POWER_SLEEP_SECONDS);
+      if (ioctl(handle, SET_POWER_STATE, POWER_ON)) return -emsg(6);
+      if (verbosity>2)
+          fprintf(stderr, "Set power to 1\n");
+    }
+
     /* eventually stop running acquisition */
     if (verbosity>2)
 	fprintf(stderr, "Stopping previous acquisition (FX2 part)....");
@@ -690,8 +713,8 @@ int main(int argc, char *argv[]) {
 
     /* send configuration */
     configword = (coinc_value<<10) |
-	(fastmode?(ShortFormat | DummyInject):(LongFormat | NoDummyInject)) |
-	calibrationenable?NIMOUTenable:0 ;
+       (fastmode?(ShortFormat | DummyInject):(LongFormat | NoDummyInject)) |
+       (calibrationenable?NIMOUTenable:0) ;
     if (ioctl(handle, WRITE_CPLD, configword | ParameterSelect | CounterReset))
       return -emsg(21);
     /* send ADC and NIM parameters */
