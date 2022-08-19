@@ -18,20 +18,22 @@ epoch_list=$pros_data_dir/epoch_list
 time_diff_list=$pros_data_dir/pfind_time_diff_list
 
 epoch_count=12
-buffer_size=23
-fine_res=2
-coarse_res=128
-skip_epoch=3
+buffer_size=24
+fine_res=1
+coarse_res=256
+skip_epoch=2
 
 ##### CHANGE THINGS HERE #####
 #begin_epoch='0xb7e82b2b'
-begin_epoch='0xb7e89c4c'
+begin_epoch='0xb86007a8'
+begin_epoch='0xb86008fc'
 ##### END CHANGE THINGS ######
 
 
 echo "$begin_epoch"
 use_first_epoch=$(( $begin_epoch + $skip_epoch ))
 $pfind_prog $pfind_arg -e $use_first_epoch -n $epoch_count -q $buffer_size -r $fine_res -R $coarse_res 2>outfile #send stderr to outfile to extract timedifference
+cat outfile
 time_diff=$(cut -f 5 -d' ' outfile | tr -dc '0-9-') # get the time difference from file
 
 rm -f outfile

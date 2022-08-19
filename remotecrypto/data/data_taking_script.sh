@@ -7,9 +7,11 @@ local_id=b
 remote_id=a
 remote_add=$remote_id$address
 
-local_events=4000000 # 200k per epoch acquire for 20epochs ~ 10s
-remote_events=1500000 # 75k per epoch 
-arg=" -A -a1 -X -s -q "
+#local_events=2000000 # 200k per epoch acquire for 20epochs ~ 10s
+#remote_events=750000 # 75k per epoch 
+local_events=2300000 # 200k per epoch acquire for 20epochs ~ 10s
+remote_events=1500000 #  
+arg=" -A -a1 -X -q "
 mkdir -p $data_root/data/rawevents
 file_out_base=$data_root/data/rawevents/raw_
 time_list=time_list

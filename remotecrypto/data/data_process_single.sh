@@ -21,12 +21,13 @@ chopper2_prog=$prog_dir/chopper2
 chopper2_arg='-V 0 -U' # verbose 3, epoch universal time
 
 ##### CHANGE THINGS HERE #####
-line=202206291921
+line=202208171033
+#line=202206291921
 #line=202206291647
 ##### END CHANGE THINGS ######
 
   echo "$raw_base$remote_id$us$line"
-  $chopper_prog $chopper_arg -i $raw_base$remote_id$us$line  -D $send_dir -d $t3_dir > outfile 2> /dev/null &
+  $chopper_prog $chopper_arg -i $raw_base$remote_id$us$line  -D $send_dir -d $t3_dir > outfile  &
   pid=$! # find chopper pid 
   sleep 8 # let it run for 2 seconds before kill with SIGTERM
   kill $pid
