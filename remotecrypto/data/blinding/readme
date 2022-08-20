@@ -1,0 +1,18 @@
+Scripts for automated testing of blinding parameters.
+To use, use, set the fixed value parameters in the vary_*.sh file
+Save and run. The data will be generated in the data directory.
+
+To process, replace the froot variable in the corresponding
+*_response.sh file.
+Save and run to generate a combined data file in the processed
+directory with first column the varied parameter,
+               second column the non-seeded count rate
+               third column the seeded count rate
+
+Filelist
+1)vary_amp.sh
+2)vary_density.sh
+3)vary_timebase.sh
+4)amp_resonse.sh
+5)density_response.sh
+6)timebase_response.sh

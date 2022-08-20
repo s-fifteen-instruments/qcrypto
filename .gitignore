@@ -10,6 +10,7 @@ remotecrypto/getrate
 remotecrypto/pfind
 remotecrypto/splicer
 remotecrypto/transferd
+remotecrypto/getrate2
 errorcorrection/ecd2
 errorcorrection/ecd2.o
 errorcorrection/rnd.o

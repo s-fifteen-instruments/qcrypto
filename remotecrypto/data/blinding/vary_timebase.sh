@@ -1,6 +1,7 @@
 #!/bin/sh
 
 datadir=./data
+mkdir -p $datadir
 
 basedate=$(date +%Y%m%d-%H%M%S )
 basename=$datadir/tmb-$basedate
@@ -12,7 +13,8 @@ density=3 #0--7
 i=850 
 for ((timebase=0; timebase<8; timebase+=1))
 do
-	$progflush
+	$progflush >/dev/null
+	echo Timebase level $timebase
 	mode=$((timebase*32 + density*4 + 01))
 	const_mode=$(( density*4 + 01))
 	seed_arg=$mode,$i,0

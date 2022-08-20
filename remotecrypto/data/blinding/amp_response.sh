@@ -4,12 +4,14 @@
 
 #froot=amp-20220819-202111-1- 
 #froot=amp-20220819-204909-109- 
-froot=amp-20220819-205353-109- 
+froot=amp-20220820-101233-109- 
 
 datadir=data
+proc_dir=processed
+mkdir -p $proc_dir
 
-
-target=$froot-combine.dat
+comb_name=combine.dat
+target=$proc_dir/$froot$comb_name
 temp_target0=temp0
 temp_target1=temp1
 blind_field=3
@@ -18,11 +20,7 @@ normal_field=2
 # clear target
 echo "">$target
 
-for ((i=0; i<6000; i+=100)) do
-#for ((i=600; i<1600; i+=1)) do
-    # use this if you only want to select one coarse value
-    #res=$(awk -f parseonlyone0.awk $datadir/$froot$i.dat )
-    # This code should be used when data is generated with readevents5 -a 0
+for ((i=0; i<6001; i+=50)) do
      res=$(cut -f$normal_field --delimiter=" " $datadir/$froot$i.dat | head -n1)
      res1=$(cut -f$blind_field --delimiter=" " $datadir/$froot$i.dat | head -n1)
     echo $i $res >>$temp_target0

@@ -2,12 +2,15 @@
 # code to generate a data file from the getrate2 samples for gnuplot
 
 
-froot=den-20220819-210716-97-850-
+froot=den-20220820-101949-97-850-
 
 datadir=data
+proc_dir=processed
+mkdir -p $proc_dir
 
 
-target=$froot-combine.dat
+comb_name=combine.dat
+target=$proc_dir/$froot$comb_name
 temp_target0=temp0
 temp_target1=temp1
 blind_field=3
