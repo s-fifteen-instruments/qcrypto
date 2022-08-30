@@ -25,7 +25,7 @@ skip_epoch=3
 
 ##### CHANGE THINGS HERE #####
 #begin_epoch='0xb7e82b2b'
-begin_epoch='0xb7e89c4c'
+begin_epoch=$(tail -n1 $pros_data_dir/single_begin_epoch)
 ##### END CHANGE THINGS ######
 
 
@@ -33,5 +33,6 @@ echo "$begin_epoch"
 use_first_epoch=$(( $begin_epoch + $skip_epoch ))
 $pfind_prog $pfind_arg -e $use_first_epoch -n $epoch_count -q $buffer_size -r $fine_res -R $coarse_res 2>outfile #send stderr to outfile to extract timedifference
 time_diff=$(cut -f 5 -d' ' outfile | tr -dc '0-9-') # get the time difference from file
+echo $begin_epoch $time_diff > $pros_data_dir/single_pfind
 
 rm -f outfile

@@ -28,10 +28,10 @@ skip_epoch=0
 
 
 ##### CHANGE THINGS HERE #####
-begin_epoch='0xb7e89c4c'
 #begin_epoch='0xb7e85901'
-time_diff=497744
+begin_epoch=$(cut -f1 -d' '< processed_test/single_pfind)
 #time_diff=-815960
+time_diff=$(cut -f2 -d' '< processed_test/single_pfind)
 ##### END CHANGE THINGS ######
 rm -f $costream_out$us$begin_epoch$us'test'
   echo "$begin_epoch  $time_diff"

@@ -21,8 +21,8 @@ chopper2_prog=$prog_dir/chopper2
 chopper2_arg='-V 0 -U' # verbose 3, epoch universal time
 
 ##### CHANGE THINGS HERE #####
-line=202206291921
 #line=202206291647
+line=$(tail -n1 rawevents/raw_time_list)
 ##### END CHANGE THINGS ######
 
   echo "$raw_base$remote_id$us$line"
@@ -42,6 +42,7 @@ line=202206291921
     begin_epoch=0x$ch_first_epoch
   fi	
   echo $begin_epoch 
+  echo $begin_epoch >$pros_data_dir/single_begin_epoch
 
 rm outfile outfile2
 
