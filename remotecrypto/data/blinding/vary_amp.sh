@@ -11,7 +11,7 @@ sampleprog="../../readevents -a1 -X -Q -b"
 sampleprog2="../../getrate2 -s -n2 -b"
 density=3 #0--7
 timebase=3 #0--7
-for ((i=0; i<6001; i+=50))
+for ((i=0; i<6001; i+=20))
 do
 	$progflush > /dev/null
 	echo Amp level $i

@@ -3,6 +3,8 @@
 
 
 froot=tmb-20220820-102006-13-850-
+froot=$(ls -tr data/tmb* | tail -n1 | sed  's/data\///' | sed 's/[0-9]*.dat$//')
+
 
 datadir=data
 proc_dir=processed
@@ -12,8 +14,8 @@ comb_name=combine.dat
 target=$proc_dir/$froot$comb_name
 temp_target0=temp0
 temp_target1=temp1
-blind_field=3
-normal_field=2
+blind_field=3,8,9,10,11
+normal_field=2,4,5,6,7
 
 # clear target
 echo "">$target
@@ -25,6 +27,6 @@ for ((timebase=0; timebase<8; timebase+=1)) do
     echo $res1 >>$temp_target1
 done
 
-paste $temp_target0 $temp_target1 > $target
+paste --delimiter=" " $temp_target0 $temp_target1 > $target
 rm $temp_target0 $temp_target1
 
