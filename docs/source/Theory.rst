@@ -18,9 +18,6 @@ General Flow
 ^^^^^^^^^^^^^
 
 .. image:: images/QKDengine_summarized_2-nodes.png
-   :scale: 50 %
-
-   This is the caption.
 
 The protocol begins with two parties, conventionally refered to as Alice and Bob. A photon source generates entangled photon pairs and sends half of every pair to Alice and the other half to Bob. In reality, the source may be co-located with either party, typically Alice.
 
