@@ -91,6 +91,8 @@
               DMA, and inhibiting data acquisition into the hardware FIFO.
    SIGPIPE:   terminates the accquisition gracefully without further
               messages on stderr.
+   SIGINT:    terminates the accquisition gracefully without further
+              messages on stderr.
 
 
     Status of code:
@@ -248,7 +250,16 @@ struct sigaction sigusr_action = {.sa_handler = &sigusr_handler,
 int running=0; /* global process variables for running status */
 void sigterm_handler(int sig) {
     switch (sig) {
-    case SIGTERM: case SIGPIPE:
+    case SIGTERM:
+	//fprintf(stderr,"SIGTERM received\n");
+	running=0;
+	break;
+    case SIGPIPE:
+	//fprintf(stderr,"SIGPIPE received\n");
+	running=0;
+	break;
+    case SIGINT:
+	//fprintf(stderr,"SIGINT received\n");
 	running=0;
 	break;
     }
@@ -586,6 +597,7 @@ int main(int argc, char *argv[]) {
     if (sigaction(SIGUSR2, &sigusr_action, NULL)) return -emsg(29);
     if (sigaction(SIGTERM, &sigterm_action, NULL)) return -emsg(29);
     if (sigaction(SIGPIPE, &sigterm_action, NULL)) return -emsg(29);
+    if (sigaction(SIGINT, &sigterm_action, NULL)) return -emsg(29);
         
     /* open device */
     handle=open(devicefilename,O_RDWR | O_NONBLOCK);
