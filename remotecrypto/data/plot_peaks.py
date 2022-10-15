@@ -152,6 +152,24 @@ def test_single():
     a.plot_hist_show()
     return a
 
+def single():
+    f = open('rawevents/raw_time_list')
+    date_list = f.readlines()
+    f.close()
+    single_date = date_list[-1].strip()
+    file1 = os.getcwd() + '/rawevents/raw_a_' + single_date
+    file2 = os.getcwd() + '/rawevents/raw_b_' + single_date
+    f = open('processed_test/single_pfind')
+    data = f.readline().strip().split()
+    delay = data[1]
+    a = RawTs(file1 = file1, file2 = file2, delay = int(delay), bins = 120, bin_width=0.125)
+    a.fname = 'plots/test'
+    directory = a.fname.split('/')[0]
+    if not os.path.exists(directory):
+        os.mkdir(directory)
+    a.plot_hist()
+    return a
+
 if __name__ == '__main__':
     #process_folder()
-    a = test_single()
+    a = single()
