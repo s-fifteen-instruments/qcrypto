@@ -34,6 +34,8 @@ def get_list(file_name: str):
         lines = [x.split() for x in f]
     return lines
 
+def ch_to_patt(channel):
+    return int(2 ** (channel - 1))
 
 
 class RawTs(object):
@@ -41,11 +43,11 @@ class RawTs(object):
     Class containing the two time sequences, and stuff
     """
 
-    def __init__(self, file1 = file1, file2 = file2, delay = delay):
+    def __init__(self, file1 = file1, file2 = file2, delay = delay, bins: int = 128, bin_width : float = 0.5):
         """
         Loads data from file
         """
-        resolution = 8 # 0.5,8 or 256
+        resolution = 256 # 0.5,8 or 256
         swap = True
         self.fname = '/tmp/tmp'
         self.ts_list1 = []
@@ -56,16 +58,26 @@ class RawTs(object):
         self.read_ts(file2, resolution, swap, self.ts_list2, self.event_channel_list2)
         self.t1 = np.array(self.ts_list1) / resolution
         self.t2 = np.array(self.ts_list2) / resolution
-        bins = 128
         self.delay_time = delay
-        self.ch_stop_delay = self.delay_time/8 + bins/2 #delay in nsecs and shift to centre of histogram
-        bin_width = 1
-
+        self.bins = bins
+        self.ch_stop_delay = self.delay_time/8 + (bins/2*bin_width) #delay in nsecs and shift to centre of histogram
+        self.bin_width = bin_width
         self.histo = g2lib.delta_loop(self.t1, self.t2 + self.ch_stop_delay,
                                  bins = bins,
                                  bin_width_ns = bin_width
                                  )
-        self.x = np.arange(bins)*bin_width
+        self.x = np.arange(bins)*self.bin_width - (bins/2)*self.bin_width
+
+    def g2_chans(self, ch1, ch2, bin_width = 0.125):
+        resolution = 256
+        t_ch0 = self.t1[[int(ch,2) & ch_to_patt(ch1) != 0 for ch in self.event_channel_list1]]
+        t_ch1 = self.t2[[int(ch,2) & ch_to_patt(ch2) != 0 for ch in self.event_channel_list2]]
+        self.ch_stop_delay = self.delay_time/8 + (self.bins/2*bin_width) #delay in nsecs and shift to centre of histogram
+        self.histo = g2lib.delta_loop(t_ch0, t_ch1 + self.ch_stop_delay,
+                                 bins = self.bins,
+                                 bin_width_ns = bin_width
+                                 )
+        self.x = np.arange(self.bins)*bin_width - (self.bins/2)*bin_width
 
     def plot_hist_show(self):
         plt.xlabel('delay (ns)')
@@ -123,15 +135,22 @@ def process_folder():
         a.plot_hist()
 
 def test_single():
-    #file1 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/raw_a_202206282230"
-    #file2 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/raw_b_202206282230"
-    #delay = 1378528
-    file1 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/a"
-    file2 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/b"
-    delay = 1180224
-    a = RawTs(file1 = file1, file2 = file2, delay = int(delay))
+    file1 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/raw_a_202208170946"
+    file2 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/raw_b_202208170946"
+    #delay = 10720560
+    #file1 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/st_a_"
+    #file2 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/st_b_"
+    delay = -72922784 
+    file1 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/raw_a_202208171030_short"
+    file2 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/raw_b_202208171030_short"
+    delay = -56949136
+    #file1 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/a"
+    #file2 = "/home/s-fifteen/programs/qcrypto/remotecrypto/data/rawevents/b"
+    #delay = 1180224
+    a = RawTs(file1 = file1, file2 = file2, delay = int(delay), bins = 60, bin_width=0.125)
     a.fname = 'plots/test'
     a.plot_hist_show()
+    return a
 
 def single():
     f = open('rawevents/raw_time_list')
@@ -153,4 +172,4 @@ def single():
 
 if __name__ == '__main__':
     #process_folder()
-    single()
+    a = single()

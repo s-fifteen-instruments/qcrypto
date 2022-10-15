@@ -20,11 +20,11 @@ costream_out=$pros_data_dir/costream_out/costream_out
 epoch_list=$pros_data_dir/epoch_list
 time_diff_list=$pros_data_dir/pfind_time_diff_list
 
-epoch_count=10
-buffer_size=23
+epoch_count=12
+buffer_size=24
 fine_res=2
-coarse_res=128
-skip_epoch=0
+coarse_res=256
+skip_epoch=2
 
 
 ##### CHANGE THINGS HERE #####
@@ -38,7 +38,7 @@ rm -f $costream_out$us$begin_epoch$us'test'
   use_first_epoch=$(( $begin_epoch + $skip_epoch ))
   $costream_prog $costream_arg -e $use_first_epoch -t $time_diff -n $costream_out$us$begin_epoch$us'test' & # output goes to file
   pid=$!
-  sleep 2
+  sleep 6
   kill $pid
   #time_diff=$(cut -f 5 -d' ' outfile | tr -dc '0-9-') # get the time difference from file
   #echo $begin_epoch $time_diff >> 

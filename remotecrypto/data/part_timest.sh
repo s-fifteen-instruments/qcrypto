@@ -4,13 +4,15 @@ first_a=37000
 block_a=73730
 #first_a=73730
 #block_a=$first_a
+first_a=365000
+block_a=204800
 first_b=365000
 block_b=204800
-last=6
+last=2
 
 a=rawevents/raw_a_
 b=rawevents/raw_b_
-timestamp=202206281930
+timestamp=202208110808
 out_a=rawevents/st_a_
 out_b=rawevents/st_b_
 #timestamp=202206291647

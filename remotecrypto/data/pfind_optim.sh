@@ -17,8 +17,8 @@ pfind_arg="-d $send_dir -D $t1_dir -V 3" #
 epoch_list=$pros_data_dir/epoch_list
 time_diff_list=$pros_data_dir/pfind_time_diff_list
 
-epoch_count=10
-buffer_size=23
+epoch_count=12
+buffer_size=25
 fine_res=2
 coarse_res=128
 skip_epoch=1

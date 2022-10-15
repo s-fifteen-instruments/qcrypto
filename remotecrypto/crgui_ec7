@@ -494,7 +494,7 @@ proc measurelocalcountrate {} { # measure local count rate with real hardware
     set localcountrate "--"
     set a [open $dataroot/rawevents r+]
     # read $a
-    set y [exec $programroot/readevents -a 1 -X -s -Q \
+    set y [exec $programroot/readevents -a 1 -X -s \
 	       | $programroot/getrate \
 	       > $dataroot/rawevents & ]
     set localcountrate [gets $a]
@@ -535,7 +535,7 @@ proc startinputpart1 {} {
 
     # start readevents but keep passive
     set readerpid [exec $programroot/readevents \
-		       -a 1  -A -X -s -Q \
+		       -a 1  -A -X -s \
 		       $detcorrection \
 		       > $dataroot/rawevents \
 		       2>>$dataroot/readeventserror & ]
@@ -605,7 +605,7 @@ proc startinputpart2 {} {
 			-m $maxeventdiff 2>> /dev/null &]
 
     set readerpid [exec $programroot/readevents \
-		       -a 1  -A -X -s -Q \
+		       -a 1  -A -X -s \
 		       $detcorrection \
 		       > $dataroot/rawevents \
 		       2>>$dataroot/readeventserror &]
@@ -707,6 +707,7 @@ proc periodefind2 {} {
 		       -n $useperiods -V 1 \
 		       -q $akfbufferorder \
 		       -r 2 \
+		       -R 128 \
 		       2>>$dataroot/pfinderror} \
 		a]
 
@@ -755,7 +756,7 @@ proc periodefind2 {} {
 			 -M $dataroot/cmdpipe \
 			 -n $dataroot/genlog -V 5 \
 			 -G 2 -w $rmtcoinctime \
-			 -u $trackwindow -Q [expr int(-$tracktime)] -R 0 \
+			 -u $trackwindow -Q [expr int(-$tracktime)] -R 5 \
 			 $costreamhistoopt -h $costreamhistonum \
 			 2>>$dataroot/costreamerror & ]
     after 1000 costreamwatchdog
@@ -991,7 +992,7 @@ proc startsinglecount {} {
 
 proc stopsinglecount {} {
     global readerpid counterpid counterpipe
-    if {$readerpid != 0} { catch {exec kill -SIGHUP $readerpid}}
+    if {$readerpid != 0} { catch {exec kill -SIGINT $readerpid}}
     if {$counterpid != 0} { catch {exec kill $counterpid}}
     set counterpid 0
     set readerpid 0
@@ -1516,7 +1517,7 @@ proc upgs { } { # update gnuplot control file
         4 { # TIMING HISTOGRAMS
             set costreamhistoopt "-H $dataroot/histos/tfli"
             exec echo "set terminal tkcanvas ; set output \"$gnucanvas\"" >$gnucontrol
-            exec echo "set xrange \[-10:10\] " >> $gnucontrol
+            exec echo "set xrange \[-1.2:1.2\] " >> $gnucontrol
             set outstring "plot \'$diagdatafile2\' "
             set gg {2 3 4 5 6 10 14} ; # column numbers in histogram
             set commt {"1-1" "1-2" "1-3" "1-4" "2-1" "3-1" "4-1"}
@@ -1622,7 +1623,7 @@ proc dolog2 {values} {
 	incr ulogcnt3
 	if {$ulogcnt3 > 0  } { # no eror in appending
 	    exec mv $diagdatafile3 $diagdatafile3old
-	    exec tail $diagdatafile3old >$diagdatafile3
+	    exec tail -n50 $diagdatafile3old >$diagdatafile3
 	    if {$plotelems >0 } {
 		catch {exec gnuplot $gnucontrol }
 		source $gnucanvas ; # load canvas source 
@@ -1638,7 +1639,7 @@ set mdisp1 1 ; # choose rates
 for {set i 1 } { $i < 4} { incr i } { set cbasel($i) 0} ; # all rates off
 for {set i 0 } { $i < 16} { incr i } { set cbcsel($i) 0} ; # all rates off
 for {set i 0 } { $i < 5 } { incr i } { set sisel($i) 0 } ; #all rates off
-set cbasel(1) 1 ; set cbcsel(1) 1 ; set sisel(0) 1 ;# have some set
+set cbasel(1) 1 ; set cbcsel(1) 1 ; set sisel(1) 1 ; set sisel(2) 1 ; set sisel(3) 1 ; set sisel(4) 1 ;# have some set
 
 frame .m4.3 
 
