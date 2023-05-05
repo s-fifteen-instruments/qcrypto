@@ -23,3 +23,4 @@ Check out the :doc:`usage` section for information on usage, including how to :r
    file specification
    usage
    functions
+   Theory

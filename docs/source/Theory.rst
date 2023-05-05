@@ -39,7 +39,7 @@ Specific Options
 
 This section covers the specific options that QKDServer uses with qcrypto. For a general overview, see the subsection `subsection-general-flow`_. The goal of this section is to highlight options that will enhance understanding of the QKDServer backend. Hence, certain options that are more technical in nature may not be listed here. For a full list of options used in QKDServer, refer to `source code <https://github.com/s-fifteen-instruments/QKDServer/tree/master/S15qkd>`_.
 
-:code:`readevents.c` is registers the arrival timestamps of detected photons. It is called by QKDServer with the following options in :code:`readevents.py` `[source] <https://github.com/s-fifteen-instruments/QKDServer/blob/master/S15qkd/readevents.py#L22-L29>`_:
+:code:`readevents.c` is registers the arrival timestamps of detected photons. It is called by QKDServer with the following options in :code:`readevents.py` `[readevents source] <https://github.com/s-fifteen-instruments/QKDServer/blob/master/S15qkd/readevents.py#L22-L29>`_:
 
 ====== ==================================== ===========
 Option Argument                             Description
@@ -57,7 +57,7 @@ Combining the options above, here is an example command that may be issued to th
 
    readevents7 -A -D -8,33,36,0 -X -b 225,900,0 -a1
    
-:code:`chopper2.c` is responsible for sorting the timestamps on the high-count side into suitably sized bins. It is called by QKDServer with the following options in :code:`chopper2.py` `[source] <https://github.com/s-fifteen-instruments/QKDServer/blob/master/S15qkd/chopper2.py#L58-L67>`_:
+:code:`chopper2.c` is responsible for sorting the timestamps on the high-count side into suitably sized bins. It is called by QKDServer with the following options in :code:`chopper2.py` `[chopper2 source] <https://github.com/s-fifteen-instruments/QKDServer/blob/master/S15qkd/chopper2.py#L58-L67>`_:
 
 ====== ==================================== ===========
 Option Argument                             Description
@@ -66,7 +66,7 @@ Option Argument                             Description
 -U       None                               Timestamps use Unix time as origin.
 ====== ==================================== ===========
 
-:code:`chopper.c` is responsible for sorting the timestamps on the low-count side into suitably sized bins. It is called with the following options in :code:`chopper.py` `[source] <https://github.com/s-fifteen-instruments/QKDServer/blob/master/S15qkd/chopper.py#L61-L73>`_
+:code:`chopper.c` is responsible for sorting the timestamps on the low-count side into suitably sized bins. It is called with the following options in :code:`chopper.py` `[chopper source] <https://github.com/s-fifteen-instruments/QKDServer/blob/master/S15qkd/chopper.py#L61-L73>`_
 
 ====== ==================================== ===========
 Option Argument                             Description
@@ -76,7 +76,7 @@ Option Argument                             Description
 -p       1                                  Specifies operation mode. 1 - Normal BBM92 operation. 0 - Service mode. 64-bit timestamps are explicitly shared between Alice and Bob. NOT SECURE for normal QKD operation.
 ====== ==================================== ===========
 
-:code:`pfind.c` is responsible for finding an appropriate time window so that two timestamps (one each from Alice and Bob) that fall within this window are counted as coincidences and those that fall without are counted as accidentals. It is called with the following options in :code:`pfind.py` `[source] <https://github.com/s-fifteen-instruments/QKDServer/blob/master/S15qkd/pfind.py#L11-L20>`_.
+:code:`pfind.c` is responsible for finding an appropriate time window so that two timestamps (one each from Alice and Bob) that fall within this window are counted as coincidences and those that fall without are counted as accidentals. It is called with the following options in :code:`pfind.py` `[pfind source] <https://github.com/s-fifteen-instruments/QKDServer/blob/master/S15qkd/pfind.py#L11-L20>`_.
 
 ====== ==================================== ===========
 Option Argument                             Description
@@ -86,7 +86,7 @@ Option Argument                             Description
 -q       25                                 Order of FFT buffer size. Defines the wraparound size of the fine/coarse periode finding part. Must lie within 12 to 23. (?)
 ====== ==================================== ===========
 
-:code:`costream.c` is responsible for tracking the coincidence window and classifying counts into coincidences or accidentals. It is called with the following options in :code:`costream.py` `[source] <https://github.com/s-fifteen-instruments/QKDServer/blob/master/S15qkd/costream.py#L70-L91>`_
+:code:`costream.c` is responsible for tracking the coincidence window and classifying counts into coincidences or accidentals. It is called with the following options in :code:`costream.py` `[costream source] <https://github.com/s-fifteen-instruments/QKDServer/blob/master/S15qkd/costream.py#L70-L91>`_
 
 ====== ==================================== ===========
 Option Argument                             Description
