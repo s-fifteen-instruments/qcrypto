@@ -662,7 +662,9 @@ keepawake_handle= open(fname[1],DUMMYMODE); */
 						fprintf(debuglog, "error st1: %d\n", errno);
 						fflush(debuglog);
 #endif
-						return -emsg(40);
+						emsg(40);
+						noshutdown = 0;
+						break;
 					}
 #ifdef DEBUG
 					fprintf(debuglog, "p3\n");
