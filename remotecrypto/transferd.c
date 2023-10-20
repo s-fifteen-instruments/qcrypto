@@ -228,7 +228,7 @@ char *errormessage[76] = {
 	"transferred larger than buffer", /* 60 */
 	"socket probably closed.",
 	"reached end of command pipe??????",
-	"cannot remove source file."
+	"cannot remove source file.",
 	"cannot set reuseaddr socket option",
 	"error parsing port number", /* 65 */
 	"port number out of range",
