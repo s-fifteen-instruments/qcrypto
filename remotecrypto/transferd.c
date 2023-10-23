@@ -37,7 +37,7 @@
                   [-e ec_in_pipe -E ec_out_pipe ]
                   [-k]
                   [-m messagesource -M messagedestintion ]
-                  [-p portnumber]
+                  [-p portnumber] [-P portnumber_src]
                   [-v verbosity]
 
  parameters:
@@ -63,6 +63,9 @@
                     parameter of this file.
   -p portnum:       port number used for communication. By default, this is
                     port number 4852.
+  -P portnum_src:   port number used for communication as server. If
+					unspecified, the port number will follow that of '-p' as
+					per original behaviour.
   -v verbosity:     choose verbosity. 0: no normal output to stdout
                     1: connect/disconnect to stdout
                     2: talk about receive/send events
@@ -283,6 +286,7 @@ int main(int argc, char *argv[])
 	socklen_t socklen;
 	FILE *cmdhandle;
 	int portnumber = DEFAULT_PORT; /* defines communication port */
+	int portnumber_src = DEFAULT_PORT;
 	int msginhandle = 0;
 	int ercinhandle = 0, ercouthandle = 0; /* error correction pipes */
 	unsigned int remotelen;
@@ -320,7 +324,7 @@ int main(int argc, char *argv[])
 
 	/* parsing options */
 	opterr = 0; /* be quiet when there are no options */
-	while ((opt = getopt(argc, argv, "d:c:t:D:l:s:km:M:p:e:E:")) != EOF)
+	while ((opt = getopt(argc, argv, "d:c:t:D:l:s:km:M:p:P:e:E:")) != EOF)
 	{
 		i = 0; /* for setinf names/modes commonly */
 		switch (opt)
@@ -355,10 +359,16 @@ int main(int argc, char *argv[])
 		case 'k': /* killmode */
 			killmode = 1;
 			break;
-		case 'p': /* set portnumber */
+		case 'p': /* set portnumber for destination */
 			if (sscanf(optarg, "%d", &portnumber) != 1)
 				return -emsg(65);
 			if ((portnumber < MINPORT) || (portnumber > MAXPORT))
+				return -emsg(66);
+			break;
+		case 'P': /* set portnumber for source */
+			if (sscanf(optarg, "%d", &portnumber_src) != 1)
+				return -emsg(65);
+			if ((portnumber_src < MINPORT) || (portnumber_src > MAXPORT))
 				return -emsg(66);
 			break;
 		}
@@ -458,6 +468,10 @@ keepawake_handle= open(fname[1],DUMMYMODE); */
 			return -emsg(24);
 		}
 	}
+    /* for compatibility for older transferd */
+    if ((portnumber != DEFAULT_PORT) && (portnumber_src == DEFAULT_PORT)) {
+        portnumber_src = portnumber;
+    }
 	/* extract host-IP */
 	sendadr.sin_addr = *(struct in_addr *)*remoteinfo->h_addr_list;
 	sendadr.sin_port = htons(portnumber);
@@ -473,7 +487,7 @@ keepawake_handle= open(fname[1],DUMMYMODE); */
 	{
 		recadr.sin_addr.s_addr = htonl(INADDR_ANY);
 	}
-	recadr.sin_port = htons(portnumber);
+	recadr.sin_port = htons(portnumber_src);
 	/* try to reuse address */
 	i = 1;
 	retval = setsockopt(recskt, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(i));
