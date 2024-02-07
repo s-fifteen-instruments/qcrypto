@@ -33,6 +33,17 @@ getrate2: getrate2.c
 getrate: getrate.c
 	gcc -Wall -O3 -o  getrate getrate.c
 
+# Increase buffer sizes for deployments with high event rates
+allow-increased-rates:
+	sed -i "s/#define TYPE1_BUFFERSIZE 320/#define TYPE1_BUFFERSIZE 3200/g" chopper2.c
+	sed -i "s/#define RAW1_SIZE 640/#define RAW1_SIZE 2000/g" pfind.c
+	sed -i "s/#define RAW1_SIZE 640/#define RAW1_SIZE 2000/g" costream.c
+	sed -i "s/#define RAW2_SIZE 20/#define RAW2_SIZE 200/g" costream.c
+	sed -i "s/#define RAW3_SIZE 150/#define RAW3_SIZE 1500/g" costream.c
+	sed -i "s/#define RAW4_SIZE 40/#define RAW4_SIZE 400/g" costream.c
+	sed -i "s/LOC_BUFSIZE 1 << 22/LOC_BUFSIZE 1 << 24/g" transferd.c
+	sed -i "s/LOC_BUFSIZE2 10000/LOC_BUFSIZE2 100000/g" transferd.c
+
 clean:
 	rm -f chopper
 	rm -f chopper2
