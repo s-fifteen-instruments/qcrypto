@@ -188,6 +188,7 @@ char *errormessage[] = {
     "wrong skew format. needs -D v1,v2,v3,v4", 
     "Multiple dskew units set, Use only -d OR -D",
     "negative number of elements to skip.",
+    "Outmode 0 doesn't support short timestamps",
 };
 int emsg(int code) {
   fprintf(stderr,"%s\n",errormessage[code]);
@@ -280,7 +281,7 @@ int process_data(uint32_t *rbbuffer, int startindex, int endindex,
 	    if (rawevent==0) continue; /* we have a void urb return */
 	    /* do any time corrections here */
 	    if (shortmode==1) 
-	        rawevent = (rawevent & 0xffffffffffff100fLL);
+	        rawevent = (rawevent & 0xffffffffffff83ffLL);
 
 	    outbuf[j] = rawevent + offsettime[rawevent&0xf]; j++;
 	  /*  fprintf(stderr, "%016lx %016lx %016lx %lx %d \n", outbuf[j-1],offsettime[rawevent&0xf], rawevent, rawevent&0xf, j-1);*/
@@ -429,6 +430,7 @@ int main(int argc, char *argv[]) {
 	    break;
 	}
     }
+    if (outmode == 0 && shortmode) return -emsg(39);
 
     /* install signal handlers: polling timer, user signals */
     if (sigaction(SIGALRM, &timeraction, NULL)) return -emsg(29);

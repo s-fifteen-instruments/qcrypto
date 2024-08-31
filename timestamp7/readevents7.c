@@ -217,6 +217,7 @@ char *errormessage[] = {
     "Wrong parameter number in threshold setting (need 0,1, or 4)",
     "Threshold parameter out of range",
     "Error writing to threshold DAC",
+    "Outmode 0 doesn't support short timestamps",
 };
 int emsg(int code) {
   fprintf(stderr,"%s\n",errormessage[code]);
@@ -327,7 +328,7 @@ int process_data(uint32_t *rbbuffer, int startindex, int endindex,
 		    ((newevent & ~0x3f)| (((uint64_t)rolloveroffset)<<32))<<4;
 		/* do any time corrections here */
 		if (shortmode==1) 
-		    rawevent = (rawevent & 0xffffffffffff100fLL);
+		    rawevent = (rawevent & 0xffffffffffff83ffLL);
 		if (skipnumber) {
 		    skipnumber--;
 		} else {
@@ -394,7 +395,7 @@ int process_data(uint32_t *rbbuffer, int startindex, int endindex,
 		if (rawevent==0) continue; /* we have a void urb return */
 		/* do any time corrections here */
 		if (shortmode==1) 
-		    rawevent = (rawevent & 0xffffffffffff100fLL);
+		    rawevent = (rawevent & 0xffffffffffff83ffLL);
 		if (skipnumber) {
 		    skipnumber--;
 		} else {
@@ -590,7 +591,8 @@ int main(int argc, char *argv[]) {
 
 	}
     }
-	
+    if (outmode == 0 && shortmode) return -emsg(44);
+
     /* install signal handlers: polling timer, user signals */
     if (sigaction(SIGALRM, &timeraction, NULL)) return -emsg(29);
     if (sigaction(SIGUSR1, &sigusr_action, NULL)) return -emsg(29);
