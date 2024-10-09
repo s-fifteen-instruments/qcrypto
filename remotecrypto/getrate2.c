@@ -88,7 +88,7 @@
 #define DEFAULT_EVENTS 1 /* number of events to count */
 #define DEFAULT_SPLITOPTION 0 /* no splitopion in output */
 #define BUF_IN_INENVENTS (1<<18) /* max number of input events in 50 ms */
-#define SLEEPTIME 30000 /* sleep for 30 msec between burst reads */
+#define SLEEPTIME 3000 /* sleep for 3 msec between burst reads */
 
 /* error handling */
 char *errormessage[] = {
