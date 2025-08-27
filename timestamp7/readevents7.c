@@ -33,6 +33,7 @@
                       until  a SIGUSR1 is received.
    -a outmode :       Defines output mode. Defaults currently to 0. Currently
                       implemented output modes are:
+		      -1: raw binary patterns from device
 		      0: raw event code patterns are delivered as 64 bit
 		         hexadecimal patterns (i.e., 16 characters) 
 		         separated by newlines. Exact structure of
@@ -186,7 +187,7 @@ char *errormessage[] = {
     "Lookuptable does not contain enough rows", /* 10 */
     "Lookuptable contains illegal entry",
     "Error parsing outmode",
-    "outmode out of range (0..2)",
+    "outmode out of range (-1..2)",
     "Can not parse maxevents",
     "Maxevents out of range", /* 15 */
     "Error reading LUT from flash",
@@ -217,7 +218,7 @@ char *errormessage[] = {
     "Wrong parameter number in threshold setting (need 0,1, or 4)",
     "Threshold parameter out of range",
     "Error writing to threshold DAC",
-    "Outmode 0 doesn't support short timestamps",
+    "Outmode 0 and -1 doesn't support short timestamps",
 };
 int emsg(int code) {
   fprintf(stderr,"%s\n",errormessage[code]);
@@ -496,7 +497,7 @@ int main(int argc, char *argv[]) {
 	    break;
 	case 'a': /* choose outmode */
 	    if (sscanf(optarg, "%d", &outmode)!=1) return -emsg(12);
-	    if ((outmode<0) || (outmode>2)) return -emsg(13);
+	    if ((outmode<-1) || (outmode>2)) return -emsg(13);
 	    break;
 	case 'r': /* begin immediately with acquisition */
 	    collectionmode=1;
@@ -591,7 +592,7 @@ int main(int argc, char *argv[]) {
 
 	}
     }
-    if (outmode == 0 && shortmode) return -emsg(44);
+    if (outmode <= 0 && shortmode) return -emsg(44);
 
     /* install signal handlers: polling timer, user signals */
     if (sigaction(SIGALRM, &timeraction, NULL)) return -emsg(29);
