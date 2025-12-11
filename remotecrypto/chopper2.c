@@ -142,7 +142,7 @@ char fname1[FNAMELENGTH] = "";           /* input file name */
 char logfname[FNAMELENGTH] = "";         /* log file name */
 char debugfname[FNAMELENGTH] = "";       /* for debugging info */
 int type1mode = 0;                       /* no mode defined. other tpyes:
-          1: single file, 2: directory save, ... */
+                                            1: single file, 2: directory save, ... */
 int uepoch = DEFAULT_UEPOCH;             /* universal epoch mode 0: no, 1: yes */
 int handlein, handle1;                   /* in and out file handles */
 FILE *loghandle;                         /* for log file */
@@ -156,9 +156,9 @@ FILE *debuglog;
 
 int smidx[7] = {15, 1, 2, 4, 8, 3, 6}; /* output pattern - now six det capable */
 int fourdetectorlogoption = 0;         /* this is to force full backward compatibility,
-          where the reported single detector events
-                include possible coincidences. Also, only
-                four values are logged instead of six. */
+                                          where the reported single detector events
+                                          include possible coincidences. Also, only
+                                          four values are logged instead of six. */
 
 /* error handling */
 
