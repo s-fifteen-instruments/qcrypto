@@ -55,12 +55,14 @@ References:
 
 Note:
     Compile with: 'gcc -O2 -o squasher squasher.c ../errorcorrection/rnd.c -lm'
+    or with OpenSSL: 'gcc -O2 -o squasher squasher.c ../errorcorrection/rnd_openssl.c -lm -lcrypto'
 */
 
 #include <stdio.h>
 #include <time.h>
 #include <math.h>
 #include "../errorcorrection/rnd.h"
+// #include "../errorcorrection/rnd_openssl.h"
 
 #define CLEAR_LSB(X)  ((X) & ((X) - 1))  /* unset least-significant set bit */
 #define GET_LSB(X)    ((X) & (-(X)))     /* get least-significant set bit */
