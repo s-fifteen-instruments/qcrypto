@@ -135,6 +135,7 @@ remove fishyness correction; obsolete with USB hardware??
 #define DEFAULT_FLUSHMODE 0        /* do not flush by default */
 #define MAXIMAL_FISHYNESS 5        /* how many out-ot-time events to detect */
 #define DEFAULT_MAXDIFF 0          /* maximum allowable time between events */
+#define DEFAULT_RANDMULTI 0        /* whether to randomly assign multi-detector events */
 
 /* global variables */
 int verbosity_level = DEFAULT_VERBOSITY; /* determie log file format */
@@ -153,6 +154,7 @@ int index1;                              /* index in outbuffer field */
 unsigned int *outbuf1;                   /* output buffer pointer */
 int flushmode = DEFAULT_FLUSHMODE;
 FILE *debuglog;
+int randmulti = DEFAULT_RANDMULTI;
 
 int smidx[7] = {15, 1, 2, 4, 8, 3, 6}; /* output pattern - now six det capable */
 int fourdetectorlogoption = 0;         /* this is to force full backward compatibility,
@@ -402,6 +404,7 @@ int main(int argc, char *argv[])
   int fishyness = 0;                            /* how many outlying events are acceptable */
   unsigned long long maxdiff = DEFAULT_MAXDIFF; /* max evt time difference */
   unsigned long long t_new, t_old, t_fine;      /* for consistecy checks */
+  unsigned int dpatt, n_dpatt;       /* store detector pattern */
 
   /* parse options */
   opterr = 0; /* be quiet when there are no options */
@@ -679,10 +682,27 @@ int main(int argc, char *argv[])
       }
       thisepoch_converted_entries++;
 
+      /* perform random detector allocation with multievent */
+      printf("%x %d\n", dpatt, n_dpatt);
+      dpatt = dv & 0xf;
+      singlebit = (dpatt & (dpatt - 1)) == 0; /* check if up to 1 bit set */
+      if (!singlebit && randmulti) {
+        for (n_dpatt = 0; v; n_dpatt++)
+          v &= v - 1; /* clear set LSB */
+        printf("%x %d\n", dpatt, n_dpatt);
+
+        //
+
+        // Find rank of set bit
+
+        // Set bit with rank
+
+      }
+
       /* type-1 file filling */
       outbuf1[index1++] = cv;
       outbuf1[index1++] = dv;
-      detcnts[dv & 0xf]++; /* histogramming */
+      detcnts[dpatt]++; /* histogramming */
       inpointer++;
     } while (--inelements);
   }
